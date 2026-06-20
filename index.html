@@ -2071,6 +2071,95 @@
       }
     }
 
+
+
+    /* FINAL SWEET CENTER LOCK
+       상세 화면 sweet 이미지를 접시 탑 정중앙에 고정합니다. */
+    .detail-jelly,
+    .detail-jelly.image-loaded {
+      left: 50% !important;
+      top: 50% !important;
+      transform: translate(-50%, -50%) !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      text-align: center !important;
+    }
+
+    .detail-jelly .asset-photo {
+      display: block !important;
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: contain !important;
+      object-position: center center !important;
+      margin: 0 auto !important;
+      position: static !important;
+      inset: auto !important;
+    }
+
+    .detail-jelly[data-sweet-type="jelly"],
+    .detail-jelly[data-sweet-type="jelly"].image-loaded {
+      top: 50% !important;
+      width: 210px !important;
+      height: 160px !important;
+    }
+
+    .detail-jelly[data-sweet-type="candyBall"],
+    .detail-jelly[data-sweet-type="candyBall"].image-loaded {
+      top: 50% !important;
+      width: 190px !important;
+      height: 190px !important;
+    }
+
+    .detail-jelly[data-sweet-type="lollipop"],
+    .detail-jelly[data-sweet-type="lollipop"].image-loaded {
+      top: 50% !important;
+      width: 210px !important;
+      height: 240px !important;
+    }
+
+    .detail-jelly[data-sweet-type="cubeJelly"],
+    .detail-jelly[data-sweet-type="cubeJelly"].image-loaded {
+      top: 50% !important;
+      width: 185px !important;
+      height: 185px !important;
+    }
+
+    .detail-jelly[data-sweet-type="heartJelly"],
+    .detail-jelly[data-sweet-type="heartJelly"].image-loaded {
+      top: 50% !important;
+      width: 200px !important;
+      height: 180px !important;
+    }
+
+    @media (max-width: 900px) {
+      .detail-jelly[data-sweet-type="jelly"],
+      .detail-jelly[data-sweet-type="jelly"].image-loaded {
+        width: 175px !important;
+        height: 135px !important;
+      }
+
+      .detail-jelly[data-sweet-type="candyBall"],
+      .detail-jelly[data-sweet-type="candyBall"].image-loaded,
+      .detail-jelly[data-sweet-type="cubeJelly"],
+      .detail-jelly[data-sweet-type="cubeJelly"].image-loaded {
+        width: 160px !important;
+        height: 160px !important;
+      }
+
+      .detail-jelly[data-sweet-type="lollipop"],
+      .detail-jelly[data-sweet-type="lollipop"].image-loaded {
+        width: 175px !important;
+        height: 210px !important;
+      }
+
+      .detail-jelly[data-sweet-type="heartJelly"],
+      .detail-jelly[data-sweet-type="heartJelly"].image-loaded {
+        width: 165px !important;
+        height: 150px !important;
+      }
+    }
+
 </style>
 </head>
 <body>
@@ -2093,7 +2182,7 @@
 감춰진 자기소개 타이포그래피를 발견하는 인터랙티브 타이포그래피 웹사이트입니다.
 -->
 <div class="title">TYPOGRAPHY COMMUNICATION</div>
-<div class="subtitle">검은 접시를 클릭하세요</div>
+<div class="subtitle">검은 접시를 클릭하세요, 안에 사탕을 3번 클릭해보세요.</div>
 <div class="top-right-controls"><div class="progress" id="progress">0 / 6</div><button class="skip-receipt-btn" id="skipReceiptBtn" type="button">NEXT → RECEIPT</button></div>
     
 <section class="conveyor-area">
@@ -2586,7 +2675,7 @@ let currentTypo = null;
       detailJelly.dataset.imageState = "normal";
 
       document.querySelectorAll(".typo-card").forEach((card, index) => {
-        const filename = index === 5 ? "typo6_receipt.png" : `typo${index + 1}.png`;
+        const filename = getReceiptTypoImageFilename(index + 1);
         const img = document.createElement("img");
         img.src = filename;
         img.alt = `Typography ${index + 1}`;
@@ -2636,13 +2725,24 @@ let currentTypo = null;
       img.src = nextSrc;
     }
 
+    function getDetailTypoImageFilename(typoId) {
+      const numericId = Number(typoId);
+      return numericId === 6 ? "typo6_receipt.png" : `typo${numericId}.png`;
+    }
+
+    function getReceiptTypoImageFilename(typoId) {
+      const numericId = Number(typoId);
+      if (numericId === 3) return "typo3_receipt.png";
+      if (numericId === 6) return "typo6_receipt.png";
+      return `typo${numericId}.png`;
+    }
+
     function setDetailTypoContent(typoId) {
       detailTypo.classList.remove("use-image");
       detailTypo.innerHTML = "";
 
-      const filename = String(typoId) === "6" ? "typo6_receipt.png" : `typo${typoId}.png`;
       const img = document.createElement("img");
-      img.src = filename;
+      img.src = getDetailTypoImageFilename(typoId);
       img.alt = `Typography ${typoId}`;
       img.className = "typo-photo";
       img.draggable = false;
@@ -2745,7 +2845,7 @@ let currentTypo = null;
     });
 
     function getTypoImageFilename(typoId) {
-      return Number(typoId) === 6 ? "typo6_receipt.png" : `typo${typoId}.png`;
+      return getReceiptTypoImageFilename(typoId);
     }
 
     function openTypoModal(typoId, fallbackHtml) {
