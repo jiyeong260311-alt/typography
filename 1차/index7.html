@@ -1,0 +1,1223 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Candy Sushi Typography Prototype</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #c9d2db;
+      font-family: Arial, sans-serif;
+      cursor: default;
+    }
+
+    .a3-screen {
+      position: relative;
+      width: min(100vw, calc(100vh * 1.414));
+      height: min(100vh, calc(100vw / 1.414));
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 15%, rgba(255,255,255,0.45), transparent 34%),
+        linear-gradient(180deg, #dde5ec 0%, #bfc9d4 100%);
+      border: 10px solid rgba(255,255,255,0.35);
+      box-shadow:
+        0 0 60px rgba(0,0,0,0.22),
+        inset 0 0 80px rgba(255,255,255,0.12);
+    }
+
+    .a3-screen.ended .plate-line {
+      animation-play-state: paused;
+    }
+
+    .title {
+      position: absolute;
+      top: 28px;
+      left: 40px;
+      z-index: 10;
+      color: #1b1f22;
+      letter-spacing: 0.08em;
+      font-size: clamp(18px, 2vw, 34px);
+      font-weight: 700;
+    }
+
+    .subtitle {
+      position: absolute;
+      top: 72px;
+      left: 42px;
+      z-index: 10;
+      color: rgba(27, 31, 34, 0.65);
+      font-size: clamp(10px, 1vw, 16px);
+      letter-spacing: 0.08em;
+    }
+
+    .progress {
+      position: absolute;
+      right: 40px;
+      top: 34px;
+      z-index: 12;
+      color: #1b1f22;
+      font-size: 14px;
+      letter-spacing: 0.12em;
+      font-weight: 700;
+    }
+
+    .conveyor-area {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 18%;
+      bottom: 8%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+    }
+
+    .belt-row {
+      position: relative;
+      width: 100%;
+      height: 28%;
+      overflow: hidden;
+    }
+
+    .plate-line {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      transform: translateY(-50%);
+      width: max-content;
+      animation: moveLeft 18s linear infinite;
+    }
+
+    .belt-row:nth-child(2) .plate-line {
+      animation-duration: 22s;
+      animation-direction: reverse;
+    }
+
+    .belt-row:nth-child(3) .plate-line {
+      animation-duration: 20s;
+    }
+
+    @keyframes moveLeft {
+      from {
+        transform: translateY(-50%) translateX(0);
+      }
+      to {
+        transform: translateY(-50%) translateX(-50%);
+      }
+    }
+
+    .plate-wrap {
+      position: relative;
+      width: 230px;
+      height: 135px;
+      flex-shrink: 0;
+    }
+
+    .plate-wrap.completed {
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.4);
+      transition: opacity 0.45s ease, transform 0.45s ease;
+    }
+
+    .plate {
+      position: absolute;
+      left: 0;
+      bottom: 10px;
+      width: 230px;
+      height: 88px;
+      border-radius: 50%;
+      background:
+        radial-gradient(
+          ellipse at 50% 33%,
+          rgba(255,255,255,0.98) 0%,
+          rgba(246,246,246,0.96) 28%,
+          rgba(211,211,211,0.93) 55%,
+          rgba(125,125,125,0.9) 100%
+        );
+      box-shadow:
+        inset 0 8px 13px rgba(255,255,255,0.95),
+        inset 0 -18px 20px rgba(0,0,0,0.22),
+        0 20px 28px rgba(0,0,0,0.18);
+      overflow: visible;
+    }
+
+    .plate::before {
+      content: "";
+      position: absolute;
+      left: 30px;
+      top: 16px;
+      width: 170px;
+      height: 46px;
+      border-radius: 50%;
+      background:
+        radial-gradient(
+          ellipse at 50% 30%,
+          rgba(255,255,255,0.96),
+          rgba(235,235,235,0.82) 48%,
+          rgba(150,150,150,0.24) 100%
+        );
+      border: 2px solid rgba(80,80,80,0.18);
+      box-shadow:
+        inset 0 5px 8px rgba(255,255,255,0.9),
+        inset 0 -8px 10px rgba(0,0,0,0.16);
+    }
+
+    .plate::after {
+      content: "";
+      position: absolute;
+      left: 28px;
+      bottom: -13px;
+      width: 174px;
+      height: 38px;
+      border-radius: 50%;
+      background:
+        linear-gradient(180deg, #e0e0e0 0%, #8c8c8c 48%, #373737 100%);
+      z-index: -1;
+      box-shadow:
+        inset 0 6px 8px rgba(255,255,255,0.45),
+        0 10px 14px rgba(0,0,0,0.16);
+    }
+
+    .plate-wrap.special .plate {
+      background:
+        radial-gradient(
+          ellipse at 50% 33%,
+          rgba(70,70,70,1) 0%,
+          rgba(35,35,35,1) 32%,
+          rgba(18,18,18,1) 55%,
+          rgba(0,0,0,1) 100%
+        );
+      box-shadow:
+        inset 0 8px 10px rgba(255,255,255,0.08),
+        inset 0 -20px 24px rgba(0,0,0,0.8),
+        0 22px 30px rgba(0,0,0,0.34);
+    }
+
+    .plate-wrap.special .plate::before {
+      background:
+        radial-gradient(
+          ellipse at 50% 30%,
+          rgba(65,65,65,0.95),
+          rgba(22,22,22,0.95) 48%,
+          rgba(0,0,0,0.92) 100%
+        );
+      border: 2px solid rgba(255,255,255,0.12);
+      box-shadow:
+        inset 0 5px 8px rgba(255,255,255,0.08),
+        inset 0 -8px 10px rgba(0,0,0,0.45);
+    }
+
+    .plate-wrap.special .plate::after {
+      background:
+        linear-gradient(180deg, #565656 0%, #202020 48%, #000000 100%);
+      box-shadow:
+        inset 0 6px 8px rgba(255,255,255,0.06),
+        0 10px 14px rgba(0,0,0,0.32);
+    }
+
+    .plate-highlight {
+      position: absolute;
+      left: 46px;
+      top: 44px;
+      width: 76px;
+      height: 18px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.42);
+      filter: blur(3px);
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .plate-wrap.special .plate-highlight {
+      background: rgba(255,255,255,0.16);
+    }
+
+    .sweet {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      transform: translateX(-50%);
+      z-index: 5;
+      filter: drop-shadow(0 14px 8px rgba(0,0,0,0.25));
+    }
+
+    .candy-ball {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 28% 22%, #ffffff 0%, #ffd6f0 13%, transparent 22%),
+        radial-gradient(circle at 62% 72%, #ff7ac8 0%, #b64cff 50%, #5317a8 100%);
+      box-shadow:
+        inset 8px 8px 14px rgba(255,255,255,0.55),
+        inset -10px -12px 18px rgba(65,0,100,0.45);
+    }
+
+    .jelly {
+      width: 88px;
+      height: 62px;
+      border-radius: 45% 45% 35% 35%;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(255,255,255,0.95), transparent 18%),
+        linear-gradient(135deg, #b7ffe9, #35caff 45%, #6f59ff 100%);
+      box-shadow:
+        inset 8px 8px 12px rgba(255,255,255,0.5),
+        inset -10px -10px 18px rgba(22,35,140,0.46);
+    }
+
+    .lollipop {
+      width: 78px;
+      height: 78px;
+      border-radius: 50%;
+      background:
+        repeating-radial-gradient(
+          circle,
+          #ff5e7e 0px,
+          #ff5e7e 8px,
+          #fff1a8 8px,
+          #fff1a8 16px,
+          #7ee7ff 16px,
+          #7ee7ff 24px
+        );
+      box-shadow:
+        inset 8px 8px 12px rgba(255,255,255,0.5),
+        inset -10px -12px 18px rgba(0,0,0,0.35);
+    }
+
+    .lollipop::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 63px;
+      width: 8px;
+      height: 52px;
+      transform: translateX(-50%) rotate(-18deg);
+      background: linear-gradient(180deg, #fff4dc, #c7a47a);
+      border-radius: 999px;
+      z-index: -1;
+    }
+
+    .cube-jelly {
+      width: 74px;
+      height: 74px;
+      border-radius: 16px;
+      transform: translateX(-50%) rotate(12deg);
+      background:
+        radial-gradient(circle at 25% 20%, rgba(255,255,255,0.9), transparent 18%),
+        linear-gradient(135deg, #fff36b, #ff9f1c 48%, #ff4d6d 100%);
+      box-shadow:
+        inset 8px 8px 12px rgba(255,255,255,0.45),
+        inset -12px -12px 18px rgba(120,35,10,0.38);
+    }
+
+    .heart-jelly {
+      width: 78px;
+      height: 68px;
+      background:
+        linear-gradient(135deg, #ff9ac8, #ff5fa2 52%, #b90059 100%);
+      transform: translateX(-50%) rotate(-8deg);
+      border-radius: 50% 50% 45% 45%;
+      box-shadow:
+        inset 8px 8px 12px rgba(255,255,255,0.45),
+        inset -12px -12px 18px rgba(110,0,50,0.42);
+    }
+
+    .heart-jelly::before,
+    .heart-jelly::after {
+      content: "";
+      position: absolute;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: inherit;
+      top: -16px;
+    }
+
+    .heart-jelly::before {
+      left: 0;
+    }
+
+    .heart-jelly::after {
+      right: 0;
+    }
+
+    .special {
+      cursor: grab;
+      transition: transform 0.25s ease, filter 0.25s ease;
+    }
+
+    .special:active {
+      cursor: grabbing;
+      transform: translateY(-12px) scale(1.03);
+    }
+
+    .special:hover {
+      transform: translateY(-6px);
+      filter: brightness(1.05);
+    }
+
+    .special:hover .sweet {
+      animation: bounce 0.55s ease infinite alternate;
+    }
+
+    @keyframes bounce {
+      from {
+        transform: translateX(-50%) translateY(0);
+      }
+      to {
+        transform: translateX(-50%) translateY(-10px);
+      }
+    }
+
+    .guide {
+      position: absolute;
+      right: 38px;
+      bottom: 28px;
+      color: rgba(27,31,34,0.58);
+      font-size: clamp(10px, 1vw, 15px);
+      letter-spacing: 0.04em;
+    }
+
+    .vignette {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at center, transparent 54%, rgba(60,70,80,0.18) 100%);
+      z-index: 20;
+    }
+
+    .detail-screen {
+      position: absolute;
+      inset: 0;
+      z-index: 50;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      background:
+        radial-gradient(circle at center, rgba(255,255,255,0.8), transparent 34%),
+        linear-gradient(180deg, #dfe7ee 0%, #bac4cf 100%);
+    }
+
+    .detail-screen.active {
+      display: flex;
+    }
+
+    .back-btn {
+      position: absolute;
+      top: 34px;
+      left: 40px;
+      border: 1px solid #111;
+      background: transparent;
+      color: #111;
+      padding: 10px 18px;
+      font-size: 14px;
+      letter-spacing: 0.12em;
+      cursor: pointer;
+    }
+
+    .back-btn:hover {
+      background: #111;
+      color: #fff;
+    }
+
+    .top-plate {
+      position: relative;
+      width: 460px;
+      height: 460px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 50% 45%, #ffffff 0%, #f0f0f0 38%, #bcbcbc 68%, #5f5f5f 100%);
+      box-shadow:
+        inset 0 18px 24px rgba(255,255,255,0.8),
+        inset 0 -28px 38px rgba(0,0,0,0.32),
+        0 36px 46px rgba(0,0,0,0.32);
+    }
+
+    .top-plate::before {
+      content: "";
+      position: absolute;
+      left: 68px;
+      top: 68px;
+      width: 324px;
+      height: 324px;
+      border-radius: 50%;
+      border: 3px solid rgba(0,0,0,0.13);
+      background:
+        radial-gradient(circle at 50% 40%, #fefefe, #dddddd 68%, #a8a8a8 100%);
+      box-shadow:
+        inset 0 12px 18px rgba(255,255,255,0.85),
+        inset 0 -18px 26px rgba(0,0,0,0.18);
+    }
+
+    .detail-jelly {
+      position: absolute;
+      left: 50%;
+      top: 38%;
+      z-index: 3;
+      width: 130px;
+      height: 100px;
+      transform: translate(-50%, -50%);
+      border-radius: 45% 45% 35% 35%;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(255,255,255,0.95), transparent 18%),
+        linear-gradient(135deg, #b7ffe9, #35caff 45%, #6f59ff 100%);
+      box-shadow:
+        inset 10px 10px 16px rgba(255,255,255,0.45),
+        inset -12px -12px 22px rgba(22,35,140,0.44),
+        0 16px 20px rgba(0,0,0,0.22);
+      cursor: grab;
+    }
+
+    .detail-jelly:active {
+      cursor: grabbing;
+    }
+
+    .detail-jelly.hit {
+      animation: jellyHit 0.18s ease;
+    }
+
+    @keyframes jellyHit {
+      0% {
+        transform: translate(-50%, -50%) scale(1);
+      }
+      40% {
+        transform: translate(-50%, -50%) scale(0.9) rotate(-5deg);
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+
+    .detail-jelly.crack-1 {
+      transform: translate(-50%, -50%) rotate(-3deg) scale(0.96);
+    }
+
+    .detail-jelly.crack-1::before {
+      content: "";
+      position: absolute;
+      left: 44%;
+      top: 10%;
+      width: 3px;
+      height: 78%;
+      background: rgba(255,255,255,0.9);
+      transform: rotate(18deg);
+      border-radius: 999px;
+      box-shadow:
+        0 0 0 1px rgba(50,50,80,0.25),
+        10px 22px 0 rgba(255,255,255,0.7);
+    }
+
+    .detail-jelly.crack-2 {
+      transform: translate(-50%, -50%) rotate(4deg) scale(0.9);
+      filter: drop-shadow(0 14px 8px rgba(0,0,0,0.25)) contrast(1.15);
+    }
+
+    .detail-jelly.crack-2::before {
+      content: "";
+      position: absolute;
+      left: 45%;
+      top: 5%;
+      width: 4px;
+      height: 86%;
+      background: rgba(255,255,255,0.95);
+      transform: rotate(20deg);
+      border-radius: 999px;
+      box-shadow:
+        0 0 0 1px rgba(50,50,80,0.25),
+        18px 22px 0 rgba(255,255,255,0.8),
+        -16px 36px 0 rgba(255,255,255,0.72);
+    }
+
+    .detail-jelly.crack-2::after {
+      content: "";
+      position: absolute;
+      left: 18%;
+      top: 45%;
+      width: 64%;
+      height: 4px;
+      background: rgba(255,255,255,0.9);
+      transform: rotate(-14deg);
+      border-radius: 999px;
+    }
+
+    .detail-jelly.broken {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.3) rotate(18deg);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+
+    .detail-typo {
+      position: absolute;
+      left: 50%;
+      top: 62%;
+      z-index: 4;
+      transform: translate(-50%, -50%);
+      width: 82%;
+      text-align: center;
+      color: #111;
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      line-height: 1.35;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+
+    .detail-typo.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1.04);
+    }
+
+    .detail-guide {
+      margin-top: 34px;
+      color: rgba(0,0,0,0.6);
+      font-size: 14px;
+      letter-spacing: 0.08em;
+    }
+
+    .ending-screen {
+      position: absolute;
+      inset: 0;
+      z-index: 80;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      gap: 80px;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(255,255,255,0.75), transparent 35%),
+        linear-gradient(180deg, #e8eef3 0%, #b7c3cf 100%);
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+
+    .ending-screen.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .owner {
+      position: relative;
+      width: 220px;
+      height: 360px;
+      transform: translateY(40px);
+      animation: ownerEnter 0.9s ease forwards;
+    }
+
+    @keyframes ownerEnter {
+      from {
+        opacity: 0;
+        transform: translateY(90px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(40px);
+      }
+    }
+
+    .owner-head {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      width: 118px;
+      height: 118px;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 35% 25%, #fff6ec 0%, #e2bfa4 55%, #b98c6e 100%);
+      box-shadow:
+        inset 8px 8px 12px rgba(255,255,255,0.5),
+        inset -10px -12px 18px rgba(90,45,30,0.25),
+        0 14px 20px rgba(0,0,0,0.18);
+    }
+
+    .owner-head::before {
+      content: "";
+      position: absolute;
+      left: 22px;
+      top: 38px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #111;
+      box-shadow: 58px 0 0 #111;
+    }
+
+    .owner-head::after {
+      content: "";
+      position: absolute;
+      left: 42px;
+      top: 72px;
+      width: 36px;
+      height: 14px;
+      border-bottom: 4px solid #111;
+      border-radius: 0 0 999px 999px;
+    }
+
+    .owner-body {
+      position: absolute;
+      left: 50%;
+      top: 105px;
+      width: 160px;
+      height: 220px;
+      transform: translateX(-50%);
+      border-radius: 40px 40px 28px 28px;
+      background: linear-gradient(180deg, #111 0%, #282828 100%);
+      box-shadow:
+        inset 10px 0 12px rgba(255,255,255,0.08),
+        inset -10px -12px 18px rgba(0,0,0,0.45),
+        0 22px 28px rgba(0,0,0,0.25);
+    }
+
+    .owner-body::before {
+      content: "";
+      position: absolute;
+      left: 38px;
+      top: 20px;
+      width: 84px;
+      height: 150px;
+      border-radius: 12px;
+      background: #f6f2eb;
+    }
+
+    .owner-arm {
+      position: absolute;
+      right: -32px;
+      top: 150px;
+      width: 130px;
+      height: 34px;
+      border-radius: 999px;
+      background:
+        linear-gradient(90deg, #222 0%, #111 55%, #e0b89a 56%, #c99675 100%);
+      transform: rotate(-8deg);
+      transform-origin: left center;
+      animation: armMove 1.2s ease forwards;
+    }
+
+    @keyframes armMove {
+      from {
+        transform: rotate(10deg) translateX(-25px);
+      }
+      to {
+        transform: rotate(-8deg) translateX(0);
+      }
+    }
+
+    .receipt {
+      position: relative;
+      width: 310px;
+      min-height: 520px;
+      padding: 34px 28px;
+      background: linear-gradient(180deg, #fffdf6 0%, #f3ead7 100%);
+      color: #111;
+      box-shadow:
+        0 32px 44px rgba(0,0,0,0.28),
+        inset 0 0 18px rgba(120,90,50,0.08);
+      transform: translateY(40px) rotate(2deg);
+      animation: receiptEnter 1s ease 0.35s forwards;
+      opacity: 0;
+    }
+
+    @keyframes receiptEnter {
+      from {
+        opacity: 0;
+        transform: translateY(90px) rotate(8deg) scale(0.92);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(40px) rotate(2deg) scale(1);
+      }
+    }
+
+    .receipt::before,
+    .receipt::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 16px;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          transparent 0px,
+          transparent 12px,
+          rgba(0,0,0,0.12) 12px,
+          rgba(0,0,0,0.12) 18px
+        );
+    }
+
+    .receipt::before {
+      top: -8px;
+    }
+
+    .receipt::after {
+      bottom: -8px;
+    }
+
+    .receipt-title {
+      text-align: center;
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      margin-bottom: 18px;
+    }
+
+    .receipt-line {
+      width: 100%;
+      height: 1px;
+      margin: 18px 0;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          #111 0px,
+          #111 8px,
+          transparent 8px,
+          transparent 14px
+        );
+    }
+
+    .receipt-typo {
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+      text-align: center;
+      line-height: 1.35;
+    }
+
+    .receipt-typo strong {
+      display: block;
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+    }
+
+    .receipt-typo span {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+    }
+
+    .receipt-typo em {
+      margin-top: 12px;
+      font-style: normal;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.55;
+    }
+
+    .receipt-footer {
+      text-align: center;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: rgba(0,0,0,0.62);
+    }
+  </style>
+</head>
+
+<body>
+  <main class="a3-screen">
+
+    <div class="title">CANDY SUSHI TYPOGRAPHY</div>
+    <div class="subtitle">Click the black jelly bowls.</div>
+    <div class="progress" id="progress">0 / 5</div>
+
+    <section class="conveyor-area">
+
+      <div class="belt-row">
+        <div class="plate-line">
+
+          <div class="plate-wrap special" data-typo="1">
+            <div class="sweet candy-ball"></div>
+            <div class="plate"></div>
+            <div class="plate-highlight"></div>
+          </div>
+
+          <div class="plate-wrap">
+            <div class="sweet jelly"></div>
+            <div class="plate"></div>
+            <div class="plate-highlight"></div>
+          </div>
+
+          <div class="plate-wrap">
+            <div class="sweet cube-jelly"></div>
+            <div class="plate"></div>
+            <div class="plate-highlight"></div>
+          </div>
+
+          <div class="plate-wrap special" data-typo="2">
+            <div class="sweet lollipop"></div>
+            <div class="plate"></div>
+            <div class="plate-highlight"></div>
+          </div>
+
+          <div class="plate-wrap">
+            <div class="sweet heart-jelly"></div>
+            <div class="plate"></div>
+            <div class="plate-highlight"></div>
+          </div>
+
+          <div class="plate-wrap">
+            <div class="sweet candy-ball"></div>
+            <div class="plate"></div>
+            <div class="plate-highlight"></div>
+          </div>
+
+          <div class="plate-wrap">
+            <div class="sweet candy-ball"></div>
+            <div class="plate"></div>
+            <div class="plate-highlight"></div>
+          </div>
+
+          <div class="plate-wrap">
+            <div class="sweet jelly"></div>
+            <div class="plate"></div>
+            <div class="plate-highlight"></div>
+          </div>
+
+          <div class="plate-wrap">
+            <div class="sweet cube-jelly"></div>
+            <div class="plate"></div>
+            <div class="plate-highlight"></div>
+          </div>
+
+          <div class="plate-wrap">
+            <div class="sweet lollipop"></div>
+            <div class="plate"></div>
+            <div class="plate-highlight"></div>
+          </div>
+
+          <div class="plate-wrap">
+            <div class="sweet heart-jelly"></div>
+            <div class="plate"></div>
+            <div class="plate-highlight"></div>
+          </div>
+
+          <div class="plate-wrap">
+            <div class="sweet candy-ball"></div>
+            <div class="plate"></div>
+            <div class="plate-highlight"></div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="belt-row">
+        <div class="plate-line">
+
+          <div class="plate-wrap">
+            <div class="sweet heart-jelly"></div>
+            <div class="plate"></div>
+            <div class="plate-highlight"></div>
+          </div>
+
+          <div class="plate-wrap special" data-typo="3">
+            <div class="sweet jelly"></div>
+            <div class="plate"></div>
+            <div class="plate-highlight"></div>
+          </div>
+
+          <div class="plate-wrap">
+            <div class="sweet lollipop"></div>
+            <div class="plate"></div>
+            <div class="plate-highlight"></div>
+          </div>
+
+          <div class="plate-wrap">
+            <div class="sweet cube-jelly"></div>
+            <div class="plate"></div>
+            <div class="plate-highlight"></div>
+          </div>
+
+          <div class="plate-wrap">
+            <div class="sweet candy-ball"></div>
+            <div class="plate"></div>
+            <div class="plate-highlight"></div>
+          </div>
+
+          <div class="plate-wrap">
+            <div class="sweet jelly"></div>
+            <div class="plate"></div>
+            <div class="plate-highlight"></div>
+          </div>
+
+          <div class="plate-wrap">
+            <div class="sweet heart-jelly"></div>
+            <div class="plate"></div>
+            <div class="plate-highlight"></div>
+          </div>
+
+          <div class="plate-wrap">
+            <div class="sweet jelly"></div>
+            <div class="plate"></div>
+            <div class="plate-highlight"></div>
+          </div>
+
+          <div class="plate-wrap">
+            <div class="sweet lollipop"></div>
+            <div class="plate"></div>
+            <div class="plate-highlight"></div>
+          </div>
+
+          <div class="plate-wrap">
+            <div class="sweet cube-jelly"></div>
+            <div class="plate"></div>
+            <div class="plate-highlight"></div>
+          </div>
+
+          <div class="plate-wrap">
+            <div class="sweet candy-ball"></div>
+            <div class="plate"></div>
+            <div class="plate-highlight"></div>
+          </div>
+
+          <div class="plate-wrap">
+            <div class="sweet jelly"></div>
+            <div class="plate"></div>
+            <div class="plate-highlight"></div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="belt-row">
+        <div class="plate-line">
+
+          <div class="plate-wrap">
+            <div class="sweet cube-jelly"></div>
+            <div class="plate"></div>
+            <div class="plate-highlight"></div>
+          </div>
+
+          <div class="plate-wrap">
+            <div class="sweet candy-ball"></div>
+            <div class="plate"></div>
+            <div class="plate-highlight"></div>
+          </div>
+
+          <div class="plate-wrap special" data-typo="4">
+            <div class="sweet heart-jelly"></div>
+            <div class="plate"></div>
+            <div class="plate-highlight"></div>
+          </div>
+
+          <div class="plate-wrap">
+            <div class="sweet jelly"></div>
+            <div class="plate"></div>
+            <div class="plate-highlight"></div>
+          </div>
+
+          <div class="plate-wrap special" data-typo="5">
+            <div class="sweet lollipop"></div>
+            <div class="plate"></div>
+            <div class="plate-highlight"></div>
+          </div>
+
+          <div class="plate-wrap">
+            <div class="sweet cube-jelly"></div>
+            <div class="plate"></div>
+            <div class="plate-highlight"></div>
+          </div>
+
+          <div class="plate-wrap">
+            <div class="sweet cube-jelly"></div>
+            <div class="plate"></div>
+            <div class="plate-highlight"></div>
+          </div>
+
+          <div class="plate-wrap">
+            <div class="sweet candy-ball"></div>
+            <div class="plate"></div>
+            <div class="plate-highlight"></div>
+          </div>
+
+          <div class="plate-wrap">
+            <div class="sweet heart-jelly"></div>
+            <div class="plate"></div>
+            <div class="plate-highlight"></div>
+          </div>
+
+          <div class="plate-wrap">
+            <div class="sweet jelly"></div>
+            <div class="plate"></div>
+            <div class="plate-highlight"></div>
+          </div>
+
+          <div class="plate-wrap">
+            <div class="sweet lollipop"></div>
+            <div class="plate"></div>
+            <div class="plate-highlight"></div>
+          </div>
+
+          <div class="plate-wrap">
+            <div class="sweet cube-jelly"></div>
+            <div class="plate"></div>
+            <div class="plate-highlight"></div>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+    <section class="detail-screen" id="detailScreen">
+      <button class="back-btn" id="backBtn">BACK</button>
+
+      <div class="top-plate">
+        <div class="detail-jelly" id="detailJelly"></div>
+        <div class="detail-typo" id="detailTypo">TYPOGRAPHY</div>
+      </div>
+
+      <p class="detail-guide">
+        Click the jelly 3 times to reveal typography.
+      </p>
+    </section>
+
+    <section class="ending-screen" id="endingScreen">
+      <div class="owner">
+        <div class="owner-head"></div>
+        <div class="owner-body"></div>
+        <div class="owner-arm"></div>
+      </div>
+
+      <div class="receipt">
+        <div class="receipt-title">RECEIPT</div>
+        <div class="receipt-line"></div>
+
+        <div class="receipt-typo">
+          <strong>DESIGN FOR HELP</strong>
+          <span>Curious.</span>
+          <span>Balanced.</span>
+          <span>Never fixed.</span>
+          <em>호기심으로 탐구하고,<br>디자인으로 사람을 돕는 사람.</em>
+        </div>
+
+        <div class="receipt-line"></div>
+        <div class="receipt-footer">THANK YOU FOR FINDING ME</div>
+      </div>
+    </section>
+
+    <div class="guide">Final Prototype · break jelly / reveal typography / receipt ending</div>
+    <div class="vignette"></div>
+
+  </main>
+
+  <script>
+    const typoTexts = {
+      1: "I AM NOT FIXED<br>INTJ-T / INFJ / ISFJ",
+      2: "BALANCE IS DESIGN<br>과하지도, 빈약하지도 않은 적절한 선",
+      3: "RULE & CURIOSITY<br>참을성, 규칙, 그리고 호기심",
+      4: "SEARCHING…<br>자료를 찾다가 오래 머무는 사람",
+      5: "MINIMAL + VINTAGE<br>간단명료하지만 감성이 있는 디자인"
+    };
+
+    const detailScreen = document.getElementById("detailScreen");
+    const detailTypo = document.getElementById("detailTypo");
+    const detailJelly = document.getElementById("detailJelly");
+    const backBtn = document.getElementById("backBtn");
+    const progress = document.getElementById("progress");
+    const endingScreen = document.getElementById("endingScreen");
+    const a3Screen = document.querySelector(".a3-screen");
+
+    let currentTypo = null;
+    let currentPlate = null;
+    let jellyClickCount = 0;
+    let completedCount = 0;
+
+    const completedTypo = new Set();
+
+    document.querySelectorAll(".plate-wrap.special").forEach((plate) => {
+      plate.addEventListener("click", () => {
+        const typoId = plate.dataset.typo;
+
+        if (completedTypo.has(typoId)) return;
+
+        currentTypo = typoId;
+        currentPlate = plate;
+        jellyClickCount = 0;
+
+        detailTypo.innerHTML = typoTexts[currentTypo];
+        detailTypo.classList.remove("show");
+
+        detailJelly.classList.remove("crack-1", "crack-2", "broken", "hit");
+
+        detailScreen.classList.add("active");
+      });
+    });
+
+    detailJelly.addEventListener("click", () => {
+      if (!currentTypo) return;
+      if (completedTypo.has(currentTypo)) return;
+
+      jellyClickCount++;
+
+      detailJelly.classList.remove("hit");
+      void detailJelly.offsetWidth;
+      detailJelly.classList.add("hit");
+
+      if (jellyClickCount === 1) {
+        detailJelly.classList.add("crack-1");
+      }
+
+      if (jellyClickCount === 2) {
+        detailJelly.classList.remove("crack-1");
+        detailJelly.classList.add("crack-2");
+      }
+
+      if (jellyClickCount >= 3) {
+        detailJelly.classList.remove("crack-1", "crack-2");
+        detailJelly.classList.add("broken");
+
+        detailTypo.classList.add("show");
+
+        completedTypo.add(currentTypo);
+        completedCount++;
+
+        progress.textContent = `${completedCount} / 5`;
+
+        if (currentPlate) {
+          setTimeout(() => {
+            currentPlate.classList.add("completed");
+          }, 500);
+        }
+
+        if (completedCount === 5) {
+          setTimeout(() => {
+            detailScreen.classList.remove("active");
+            a3Screen.classList.add("ended");
+            endingScreen.classList.add("active");
+          }, 1400);
+        }
+      }
+    });
+
+    backBtn.addEventListener("click", () => {
+      detailScreen.classList.remove("active");
+      detailTypo.classList.remove("show");
+      detailJelly.classList.remove("crack-1", "crack-2", "broken", "hit");
+
+      currentTypo = null;
+      currentPlate = null;
+      jellyClickCount = 0;
+    });
+  </script>
+</body>
+</html>

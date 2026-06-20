@@ -1,0 +1,3024 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Candy Sushi Typography Prototype</title>
+<style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #c9d2db;
+      font-family: Arial, sans-serif;
+      cursor: default;
+    }
+
+    .a3-screen {
+      position: relative;
+      width: min(100vw, calc(100vh * 1.414));
+      height: min(100vh, calc(100vw / 1.414));
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 15%, rgba(255,255,255,0.45), transparent 34%),
+        linear-gradient(180deg, #dde5ec 0%, #bfc9d4 100%);
+      border: 10px solid rgba(255,255,255,0.35);
+      box-shadow:
+        0 0 60px rgba(0,0,0,0.22),
+        inset 0 0 80px rgba(255,255,255,0.12);
+    }
+
+    .a3-screen.ended .plate-line {
+      animation-play-state: paused;
+    }
+
+
+
+    /* INTRO: Japanese welcome + sliding doors */
+    .a3-screen.intro-lock .plate-line {
+      animation-play-state: paused;
+    }
+
+    .intro-screen {
+      position: absolute;
+      inset: 0;
+      z-index: 120;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      background: #15110f;
+      transition: opacity 0.7s ease, visibility 0.7s ease;
+    }
+
+    .intro-screen.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .door {
+      position: absolute;
+      top: 0;
+      width: 50.5%;
+      height: 100%;
+      background:
+        linear-gradient(90deg, rgba(0,0,0,0.18), transparent 18%, rgba(255,255,255,0.12) 50%, transparent 82%, rgba(0,0,0,0.24)),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.07) 0px, rgba(255,255,255,0.07) 2px, transparent 2px, transparent 86px),
+        linear-gradient(180deg, #3a2420 0%, #6d2f28 42%, #2a1715 100%);
+      box-shadow: inset 0 0 42px rgba(0,0,0,0.45);
+      transition: transform 1.25s cubic-bezier(.72,.02,.16,1);
+    }
+
+    .door-left {
+      left: 0;
+      border-right: 2px solid rgba(255,231,184,0.28);
+    }
+
+    .door-right {
+      right: 0;
+      border-left: 2px solid rgba(255,231,184,0.28);
+    }
+
+    .intro-screen.open .door-left {
+      transform: translateX(-101%);
+    }
+
+    .intro-screen.open .door-right {
+      transform: translateX(101%);
+    }
+
+    .intro-content {
+      position: relative;
+      z-index: 2;
+      width: min(520px, 78%);
+      padding: 34px 28px 38px;
+      text-align: center;
+      color: #fff8e8;
+      border: 1px solid rgba(255,248,232,0.24);
+      background: rgba(20,13,10,0.42);
+      box-shadow: 0 24px 45px rgba(0,0,0,0.35);
+      backdrop-filter: blur(8px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    .intro-screen.open .intro-content {
+      opacity: 0;
+      transform: translateY(18px) scale(0.96);
+      pointer-events: none;
+    }
+
+    .intro-jp {
+      margin: 0 0 10px;
+      font-size: clamp(34px, 5vw, 74px);
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      line-height: 1;
+    }
+
+    .intro-ko {
+      margin: 0 0 22px;
+      font-size: clamp(13px, 1.3vw, 18px);
+      letter-spacing: 0.08em;
+      color: rgba(255,248,232,0.78);
+    }
+
+    .intro-btn {
+      border: 1px solid rgba(255,248,232,0.82);
+      background: rgba(255,248,232,0.08);
+      color: #fff8e8;
+      padding: 12px 28px;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.16em;
+      cursor: pointer;
+      transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+    }
+
+    .intro-btn:hover {
+      background: #fff8e8;
+      color: #1b1412;
+      transform: translateY(-2px);
+    }
+
+    .intro-hint {
+      margin-top: 16px;
+      font-size: 11px;
+      line-height: 1.5;
+      letter-spacing: 0.06em;
+      color: rgba(255,248,232,0.56);
+    }
+
+    .title {
+      position: absolute;
+      top: 28px;
+      left: 40px;
+      z-index: 10;
+      color: #1b1f22;
+      letter-spacing: 0.08em;
+      font-size: clamp(18px, 2vw, 34px);
+      font-weight: 700;
+    }
+
+    .subtitle {
+      position: absolute;
+      top: 72px;
+      left: 42px;
+      z-index: 10;
+      color: rgba(27, 31, 34, 0.65);
+      font-size: clamp(10px, 1vw, 16px);
+      letter-spacing: 0.08em;
+    }
+
+    .progress {
+      position: absolute;
+      right: 40px;
+      top: 34px;
+      z-index: 12;
+      color: #1b1f22;
+      font-size: 14px;
+      letter-spacing: 0.12em;
+      font-weight: 700;
+    }
+
+    .conveyor-area {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 18%;
+      bottom: 8%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+    }
+
+    .belt-row {
+      position: relative;
+      width: 100%;
+      height: 28%;
+      overflow: hidden;
+    }
+
+    .plate-line {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      display: flex;
+      gap: 20px;
+      align-items: center;
+      transform: translateY(-50%);
+      width: max-content;
+      animation: moveLeft 18s linear infinite;
+    }
+
+    .belt-row:nth-child(2) .plate-line {
+      animation-duration: 22s;
+      animation-direction: reverse;
+    }
+
+    .belt-row:nth-child(3) .plate-line {
+      animation-duration: 20s;
+    }
+
+    @keyframes moveLeft {
+      from {
+        transform: translateY(-50%) translateX(0);
+      }
+      to {
+        transform: translateY(-50%) translateX(-50%);
+      }
+    }
+
+    .plate-wrap {
+      position: relative;
+      width: 230px;
+      height: 135px;
+      flex-shrink: 0;
+    }
+
+    .plate-wrap.completed {
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.4);
+      transition: opacity 0.45s ease, transform 0.45s ease;
+    }
+
+    .plate {
+      position: absolute;
+      left: 0;
+      bottom: 10px;
+      width: 230px;
+      height: 88px;
+      border-radius: 50%;
+      background:
+        radial-gradient(
+          ellipse at 50% 33%,
+          rgba(255,255,255,0.98) 0%,
+          rgba(246,246,246,0.96) 28%,
+          rgba(211,211,211,0.93) 55%,
+          rgba(125,125,125,0.9) 100%
+        );
+      box-shadow:
+        inset 0 8px 13px rgba(255,255,255,0.95),
+        inset 0 -18px 20px rgba(0,0,0,0.22),
+        0 20px 28px rgba(0,0,0,0.18);
+      overflow: visible;
+    }
+
+    .plate::before {
+      content: "";
+      position: absolute;
+      left: 30px;
+      top: 16px;
+      width: 170px;
+      height: 46px;
+      border-radius: 50%;
+      background:
+        radial-gradient(
+          ellipse at 50% 30%,
+          rgba(255,255,255,0.96),
+          rgba(235,235,235,0.82) 48%,
+          rgba(150,150,150,0.24) 100%
+        );
+      border: 2px solid rgba(80,80,80,0.18);
+      box-shadow:
+        inset 0 5px 8px rgba(255,255,255,0.9),
+        inset 0 -8px 10px rgba(0,0,0,0.16);
+    }
+
+    .plate::after {
+      content: "";
+      position: absolute;
+      left: 28px;
+      bottom: -13px;
+      width: 174px;
+      height: 38px;
+      border-radius: 50%;
+      background:
+        linear-gradient(180deg, #e0e0e0 0%, #8c8c8c 48%, #373737 100%);
+      z-index: -1;
+      box-shadow:
+        inset 0 6px 8px rgba(255,255,255,0.45),
+        0 10px 14px rgba(0,0,0,0.16);
+    }
+
+    .plate-wrap.special .plate {
+      background:
+        radial-gradient(
+          ellipse at 50% 33%,
+          rgba(70,70,70,1) 0%,
+          rgba(35,35,35,1) 32%,
+          rgba(18,18,18,1) 55%,
+          rgba(0,0,0,1) 100%
+        );
+      box-shadow:
+        inset 0 8px 10px rgba(255,255,255,0.08),
+        inset 0 -20px 24px rgba(0,0,0,0.8),
+        0 22px 30px rgba(0,0,0,0.34);
+    }
+
+    .plate-wrap.special .plate::before {
+      background:
+        radial-gradient(
+          ellipse at 50% 30%,
+          rgba(65,65,65,0.95),
+          rgba(22,22,22,0.95) 48%,
+          rgba(0,0,0,0.92) 100%
+        );
+      border: 2px solid rgba(255,255,255,0.12);
+      box-shadow:
+        inset 0 5px 8px rgba(255,255,255,0.08),
+        inset 0 -8px 10px rgba(0,0,0,0.45);
+    }
+
+    .plate-wrap.special .plate::after {
+      background:
+        linear-gradient(180deg, #565656 0%, #202020 48%, #000000 100%);
+      box-shadow:
+        inset 0 6px 8px rgba(255,255,255,0.06),
+        0 10px 14px rgba(0,0,0,0.32);
+    }
+
+    .plate-highlight {
+      position: absolute;
+      left: 46px;
+      top: 44px;
+      width: 76px;
+      height: 18px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.42);
+      filter: blur(3px);
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .plate-wrap.special .plate-highlight {
+      background: rgba(255,255,255,0.16);
+    }
+
+    .sweet {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      transform: translateX(-50%);
+      z-index: 5;
+      filter: drop-shadow(0 14px 8px rgba(0,0,0,0.25));
+    }
+
+    .candy-ball {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 28% 22%, #ffffff 0%, #ffd6f0 13%, transparent 22%),
+        radial-gradient(circle at 62% 72%, #ff7ac8 0%, #b64cff 50%, #5317a8 100%);
+      box-shadow:
+        inset 8px 8px 14px rgba(255,255,255,0.55),
+        inset -10px -12px 18px rgba(65,0,100,0.45);
+    }
+
+    .jelly {
+      width: 88px;
+      height: 62px;
+      border-radius: 45% 45% 35% 35%;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(255,255,255,0.95), transparent 18%),
+        linear-gradient(135deg, #b7ffe9, #35caff 45%, #6f59ff 100%);
+      box-shadow:
+        inset 8px 8px 12px rgba(255,255,255,0.5),
+        inset -10px -10px 18px rgba(22,35,140,0.46);
+    }
+
+    .lollipop {
+      width: 78px;
+      height: 78px;
+      border-radius: 50%;
+      background:
+        repeating-radial-gradient(
+          circle,
+          #ff5e7e 0px,
+          #ff5e7e 8px,
+          #fff1a8 8px,
+          #fff1a8 16px,
+          #7ee7ff 16px,
+          #7ee7ff 24px
+        );
+      box-shadow:
+        inset 8px 8px 12px rgba(255,255,255,0.5),
+        inset -10px -12px 18px rgba(0,0,0,0.35);
+    }
+
+    .lollipop::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 63px;
+      width: 8px;
+      height: 52px;
+      transform: translateX(-50%) rotate(-18deg);
+      background: linear-gradient(180deg, #fff4dc, #c7a47a);
+      border-radius: 999px;
+      z-index: -1;
+    }
+
+    .cube-jelly {
+      width: 74px;
+      height: 74px;
+      border-radius: 16px;
+      transform: translateX(-50%) rotate(12deg);
+      background:
+        radial-gradient(circle at 25% 20%, rgba(255,255,255,0.9), transparent 18%),
+        linear-gradient(135deg, #fff36b, #ff9f1c 48%, #ff4d6d 100%);
+      box-shadow:
+        inset 8px 8px 12px rgba(255,255,255,0.45),
+        inset -12px -12px 18px rgba(120,35,10,0.38);
+    }
+
+    .heart-jelly {
+      width: 78px;
+      height: 68px;
+      background:
+        linear-gradient(135deg, #ff9ac8, #ff5fa2 52%, #b90059 100%);
+      transform: translateX(-50%) rotate(-8deg);
+      border-radius: 50% 50% 45% 45%;
+      box-shadow:
+        inset 8px 8px 12px rgba(255,255,255,0.45),
+        inset -12px -12px 18px rgba(110,0,50,0.42);
+    }
+
+    .heart-jelly::before,
+    .heart-jelly::after {
+      content: "";
+      position: absolute;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: inherit;
+      top: -16px;
+    }
+
+    .heart-jelly::before {
+      left: 0;
+    }
+
+    .heart-jelly::after {
+      right: 0;
+    }
+
+    .special {
+      cursor: grab;
+      transition: transform 0.25s ease, filter 0.25s ease;
+    }
+
+    .special:active {
+      cursor: grabbing;
+      transform: translateY(-12px) scale(1.03);
+    }
+
+    .special:hover {
+      transform: translateY(-6px);
+      filter: brightness(1.05);
+    }
+
+    .special:hover .sweet {
+      animation: bounce 0.55s ease infinite alternate;
+    }
+
+    @keyframes bounce {
+      from {
+        transform: translateX(-50%) translateY(0);
+      }
+      to {
+        transform: translateX(-50%) translateY(-10px);
+      }
+    }
+
+    .guide {
+      position: absolute;
+      right: 38px;
+      bottom: 28px;
+      color: rgba(27,31,34,0.58);
+      font-size: clamp(10px, 1vw, 15px);
+      letter-spacing: 0.04em;
+    }
+
+    .vignette {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at center, transparent 54%, rgba(60,70,80,0.18) 100%);
+      z-index: 20;
+    }
+
+    .detail-screen {
+      position: absolute;
+      inset: 0;
+      z-index: 50;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      background:
+        radial-gradient(circle at center, rgba(255,255,255,0.8), transparent 34%),
+        linear-gradient(180deg, #dfe7ee 0%, #bac4cf 100%);
+    }
+
+    .detail-screen.active {
+      display: flex;
+    }
+
+    .back-btn {
+      position: absolute;
+      top: 34px;
+      left: 40px;
+      border: 1px solid #111;
+      background: transparent;
+      color: #111;
+      padding: 10px 18px;
+      font-size: 14px;
+      letter-spacing: 0.12em;
+      cursor: pointer;
+    }
+
+    .back-btn:hover {
+      background: #111;
+      color: #fff;
+    }
+
+    .top-plate {
+      position: relative;
+      width: 560px;
+      height: 560px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 50% 45%, #ffffff 0%, #f0f0f0 38%, #bcbcbc 68%, #5f5f5f 100%);
+      box-shadow:
+        inset 0 18px 24px rgba(255,255,255,0.8),
+        inset 0 -28px 38px rgba(0,0,0,0.32),
+        0 36px 46px rgba(0,0,0,0.32);
+    }
+
+    .top-plate::before {
+      content: "";
+      position: absolute;
+      left: 82px;
+      top: 82px;
+      width: 396px;
+      height: 396px;
+      border-radius: 50%;
+      border: 3px solid rgba(0,0,0,0.13);
+      background:
+        radial-gradient(circle at 50% 40%, #fefefe, #dddddd 68%, #a8a8a8 100%);
+      box-shadow:
+        inset 0 12px 18px rgba(255,255,255,0.85),
+        inset 0 -18px 26px rgba(0,0,0,0.18);
+    }
+
+    .top-plate.rotatable {
+      cursor: grab;
+      transition: transform 0.75s cubic-bezier(.19,1,.22,1), box-shadow 0.45s ease;
+      transform-style: preserve-3d;
+    }
+
+    .top-plate.rotatable:hover {
+      box-shadow:
+        inset 0 18px 24px rgba(255,255,255,0.8),
+        inset 0 -28px 38px rgba(0,0,0,0.32),
+        0 42px 56px rgba(0,0,0,0.38);
+    }
+
+    .top-plate.rotatable:active {
+      cursor: grabbing;
+    }
+
+    .top-plate.turned {
+      transform: rotateY(180deg);
+    }
+
+    .top-plate.turned .detail-typo,
+    .top-plate.turned .detail-jelly {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .source-card {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      z-index: 6;
+      width: 68%;
+      min-height: 220px;
+      padding: 28px 24px;
+      transform: translate(-50%, -50%) rotateY(180deg);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 12px;
+      text-align: center;
+      color: #111;
+      border: 1px solid rgba(0,0,0,0.18);
+      border-radius: 22px;
+      background:
+        linear-gradient(180deg, rgba(255,253,246,0.96), rgba(238,229,212,0.94));
+      box-shadow:
+        0 18px 26px rgba(0,0,0,0.20),
+        inset 0 0 20px rgba(130,100,60,0.10);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.28s ease 0.22s;
+    }
+
+    .top-plate.turned .source-card {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .source-label {
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.22em;
+      color: rgba(0,0,0,0.52);
+    }
+
+    .source-title {
+      font-size: clamp(22px, 2.7vw, 36px);
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      line-height: 1.2;
+    }
+
+    .source-body {
+      font-size: clamp(13px, 1.2vw, 17px);
+      font-weight: 700;
+      line-height: 1.6;
+      word-break: keep-all;
+    }
+
+    .source-footnote {
+      margin-top: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: rgba(0,0,0,0.52);
+    }
+
+    .detail-jelly {
+      position: absolute;
+      left: 50%;
+      top: 38%;
+      z-index: 3;
+      width: 130px;
+      height: 100px;
+      transform: translate(-50%, -50%);
+      border-radius: 45% 45% 35% 35%;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(255,255,255,0.95), transparent 18%),
+        linear-gradient(135deg, #b7ffe9, #35caff 45%, #6f59ff 100%);
+      box-shadow:
+        inset 10px 10px 16px rgba(255,255,255,0.45),
+        inset -12px -12px 22px rgba(22,35,140,0.44),
+        0 16px 20px rgba(0,0,0,0.22);
+      cursor: grab;
+    }
+
+    .detail-jelly:active {
+      cursor: grabbing;
+    }
+
+    .detail-jelly.hit {
+      animation: jellyHit 0.18s ease;
+    }
+
+    @keyframes jellyHit {
+      0% {
+        transform: translate(-50%, -50%) scale(1);
+      }
+      40% {
+        transform: translate(-50%, -50%) scale(0.9) rotate(-5deg);
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+
+    .detail-jelly.crack-1 {
+      transform: translate(-50%, -50%) rotate(-3deg) scale(0.96);
+    }
+
+    .detail-jelly.crack-1::before {
+      content: "";
+      position: absolute;
+      left: 44%;
+      top: 10%;
+      width: 3px;
+      height: 78%;
+      background: rgba(255,255,255,0.9);
+      transform: rotate(18deg);
+      border-radius: 999px;
+      box-shadow:
+        0 0 0 1px rgba(50,50,80,0.25),
+        10px 22px 0 rgba(255,255,255,0.7);
+    }
+
+    .detail-jelly.crack-2 {
+      transform: translate(-50%, -50%) rotate(4deg) scale(0.9);
+      filter: drop-shadow(0 14px 8px rgba(0,0,0,0.25)) contrast(1.15);
+    }
+
+    .detail-jelly.crack-2::before {
+      content: "";
+      position: absolute;
+      left: 45%;
+      top: 5%;
+      width: 4px;
+      height: 86%;
+      background: rgba(255,255,255,0.95);
+      transform: rotate(20deg);
+      border-radius: 999px;
+      box-shadow:
+        0 0 0 1px rgba(50,50,80,0.25),
+        18px 22px 0 rgba(255,255,255,0.8),
+        -16px 36px 0 rgba(255,255,255,0.72);
+    }
+
+    .detail-jelly.crack-2::after {
+      content: "";
+      position: absolute;
+      left: 18%;
+      top: 45%;
+      width: 64%;
+      height: 4px;
+      background: rgba(255,255,255,0.9);
+      transform: rotate(-14deg);
+      border-radius: 999px;
+    }
+
+    .detail-jelly.broken {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.3) rotate(18deg);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+
+    .detail-typo {
+      position: absolute;
+      left: 50%;
+      top: 62%;
+      z-index: 4;
+      transform: translate(-50%, -50%);
+      width: 82%;
+      text-align: center;
+      color: #111;
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      line-height: 1.35;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+
+    .detail-typo.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1.04);
+    }
+
+    .detail-guide {
+      margin-top: 34px;
+      color: rgba(0,0,0,0.6);
+      font-size: 14px;
+      letter-spacing: 0.08em;
+    }
+
+    .ending-screen {
+      position: absolute;
+      inset: 0;
+      z-index: 80;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: clamp(18px, 2.2vw, 30px);
+      padding: clamp(26px, 3vw, 44px);
+      background:
+        radial-gradient(circle at 50% 20%, rgba(255,255,255,0.75), transparent 35%),
+        linear-gradient(180deg, #e8eef3 0%, #b7c3cf 100%);
+      opacity: 0;
+      transition: opacity 0.8s ease;
+    }
+
+    .ending-screen.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .ending-main {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: clamp(44px, 7vw, 80px);
+      width: 100%;
+      max-height: 68%;
+    }
+
+    .owner {
+      position: relative;
+      width: 220px;
+      height: 360px;
+      transform: translateY(40px);
+      animation: ownerEnter 0.9s ease forwards;
+    }
+
+    @keyframes ownerEnter {
+      from {
+        opacity: 0;
+        transform: translateY(90px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(40px);
+      }
+    }
+
+    .owner-head {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      width: 118px;
+      height: 118px;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 35% 25%, #fff6ec 0%, #e2bfa4 55%, #b98c6e 100%);
+      box-shadow:
+        inset 8px 8px 12px rgba(255,255,255,0.5),
+        inset -10px -12px 18px rgba(90,45,30,0.25),
+        0 14px 20px rgba(0,0,0,0.18);
+    }
+
+    .owner-head::before {
+      content: "";
+      position: absolute;
+      left: 22px;
+      top: 38px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #111;
+      box-shadow: 58px 0 0 #111;
+    }
+
+    .owner-head::after {
+      content: "";
+      position: absolute;
+      left: 42px;
+      top: 72px;
+      width: 36px;
+      height: 14px;
+      border-bottom: 4px solid #111;
+      border-radius: 0 0 999px 999px;
+    }
+
+    .owner-body {
+      position: absolute;
+      left: 50%;
+      top: 105px;
+      width: 160px;
+      height: 220px;
+      transform: translateX(-50%);
+      border-radius: 40px 40px 28px 28px;
+      background: linear-gradient(180deg, #111 0%, #282828 100%);
+      box-shadow:
+        inset 10px 0 12px rgba(255,255,255,0.08),
+        inset -10px -12px 18px rgba(0,0,0,0.45),
+        0 22px 28px rgba(0,0,0,0.25);
+    }
+
+    .owner-body::before {
+      content: "";
+      position: absolute;
+      left: 38px;
+      top: 20px;
+      width: 84px;
+      height: 150px;
+      border-radius: 12px;
+      background: #f6f2eb;
+    }
+
+    .owner-arm {
+      position: absolute;
+      right: -32px;
+      top: 150px;
+      width: 130px;
+      height: 34px;
+      border-radius: 999px;
+      background:
+        linear-gradient(90deg, #222 0%, #111 55%, #e0b89a 56%, #c99675 100%);
+      transform: rotate(-8deg);
+      transform-origin: left center;
+      animation: armMove 1.2s ease forwards;
+    }
+
+    @keyframes armMove {
+      from {
+        transform: rotate(10deg) translateX(-25px);
+      }
+      to {
+        transform: rotate(-8deg) translateX(0);
+      }
+    }
+
+    .receipt {
+      position: relative;
+      width: 310px;
+      min-height: 520px;
+      padding: 34px 28px;
+      background: linear-gradient(180deg, #fffdf6 0%, #f3ead7 100%);
+      color: #111;
+      box-shadow:
+        0 32px 44px rgba(0,0,0,0.28),
+        inset 0 0 18px rgba(120,90,50,0.08);
+      transform: translateY(40px) rotate(2deg);
+      animation: receiptEnter 1s ease 0.35s forwards;
+      opacity: 0;
+    }
+
+    @keyframes receiptEnter {
+      from {
+        opacity: 0;
+        transform: translateY(90px) rotate(8deg) scale(0.92);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(40px) rotate(2deg) scale(1);
+      }
+    }
+
+    .receipt::before,
+    .receipt::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 16px;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          transparent 0px,
+          transparent 12px,
+          rgba(0,0,0,0.12) 12px,
+          rgba(0,0,0,0.12) 18px
+        );
+    }
+
+    .receipt::before {
+      top: -8px;
+    }
+
+    .receipt::after {
+      bottom: -8px;
+    }
+
+    .receipt-title {
+      text-align: center;
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+      margin-bottom: 18px;
+    }
+
+    .receipt-line {
+      width: 100%;
+      height: 1px;
+      margin: 18px 0;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          #111 0px,
+          #111 8px,
+          transparent 8px,
+          transparent 14px
+        );
+    }
+
+    .receipt-typo {
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+      text-align: center;
+      line-height: 1.35;
+    }
+
+    .receipt-typo strong {
+      display: block;
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+    }
+
+    .receipt-typo span {
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+    }
+
+    .receipt-typo em {
+      margin-top: 12px;
+      font-style: normal;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.55;
+    }
+
+    .receipt-footer {
+      text-align: center;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: rgba(0,0,0,0.62);
+    }
+
+    .all-typo-strip {
+      width: min(92%, 1180px);
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: clamp(10px, 1vw, 16px);
+      margin-top: clamp(42px, 6vh, 86px);
+      opacity: 0;
+      transform: translateY(52px);
+      animation: typoStripEnter 0.85s ease 1s forwards;
+    }
+
+    @keyframes typoStripEnter {
+      from {
+        opacity: 0;
+        transform: translateY(52px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .typo-card {
+      min-height: 138px;
+      padding: 16px 12px;
+      border: 1px solid rgba(0,0,0,0.16);
+      border-radius: 18px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.78), rgba(255,255,255,0.42));
+      box-shadow:
+        0 16px 22px rgba(0,0,0,0.12),
+        inset 0 0 18px rgba(255,255,255,0.32);
+      color: #111;
+      text-align: center;
+      backdrop-filter: blur(6px);
+    }
+
+    .typo-card-num {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.16em;
+      color: rgba(0,0,0,0.5);
+    }
+
+    .typo-card-title {
+      display: block;
+      margin-bottom: 8px;
+      font-size: clamp(13px, 1.1vw, 18px);
+      font-weight: 900;
+      line-height: 1.15;
+      letter-spacing: 0.06em;
+    }
+
+    .typo-card-desc {
+      display: block;
+      font-size: clamp(10px, 0.8vw, 13px);
+      font-weight: 700;
+      line-height: 1.45;
+      color: rgba(0,0,0,0.68);
+      word-break: keep-all;
+    }
+
+    .typo-card.final {
+      background:
+        linear-gradient(180deg, #fffdf6 0%, #f3ead7 100%);
+      border-color: rgba(0,0,0,0.28);
+      transform: rotate(1deg);
+    }
+
+    @media (max-width: 900px) {
+      .ending-main {
+        gap: 28px;
+        transform: scale(0.86);
+      }
+
+      .all-typo-strip {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+
+    /* IMAGE ASSET MODE
+       같은 폴더에 아래 파일명을 넣으면 CSS 도형 대신 이미지가 우선 표시됩니다.
+       파일이 없으면 기존 CSS 도형이 그대로 보입니다. */
+    .asset-photo {
+      display: none;
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      pointer-events: none;
+      user-select: none;
+      z-index: 12;
+    }
+
+    .asset-photo.loaded {
+      display: block;
+    }
+
+    .plate.image-loaded {
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+
+    .plate.image-loaded::before,
+    .plate.image-loaded::after,
+    .top-plate.image-loaded::before,
+    .sweet.image-loaded::before,
+    .sweet.image-loaded::after,
+    .detail-jelly.image-loaded::before,
+    .detail-jelly.image-loaded::after {
+      display: none !important;
+    }
+
+    .plate .asset-photo {
+      inset: -28px -8px -18px -8px;
+      width: calc(100% + 16px);
+      height: calc(100% + 46px);
+    }
+
+    .sweet.image-loaded,
+    .detail-jelly.image-loaded {
+      background: transparent !important;
+      box-shadow: none !important;
+      filter: drop-shadow(0 14px 8px rgba(0,0,0,0.25));
+    }
+
+    .sweet .asset-photo,
+    .detail-jelly .asset-photo {
+      inset: -8px;
+      width: calc(100% + 16px);
+      height: calc(100% + 16px);
+    }
+
+    .top-plate.image-loaded {
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+
+    .top-plate > .top-plate-photo {
+      z-index: 1;
+    }
+
+    .detail-jelly {
+      z-index: 5;
+    }
+
+    .detail-typo.use-image {
+      top: 60%;
+      width: 70%;
+      height: 180px;
+      font-size: 0;
+    }
+
+    .detail-typo .typo-photo {
+      display: none;
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .detail-typo.use-image .typo-photo.loaded {
+      display: block;
+    }
+
+    .owner.image-loaded > :not(.owner-photo),
+    .receipt.image-loaded > :not(.receipt-photo):not(.receipt-overlay) {
+      display: none !important;
+    }
+
+    .owner-photo {
+      display: none;
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      z-index: 5;
+    }
+
+    .owner-photo.loaded {
+      display: block;
+    }
+
+    .receipt-photo {
+      display: none;
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .receipt-photo.loaded {
+      display: block;
+    }
+
+    .receipt.image-loaded {
+      background: transparent !important;
+      box-shadow: 0 32px 44px rgba(0,0,0,0.28);
+    }
+
+    .receipt.image-loaded::before,
+    .receipt.image-loaded::after {
+      display: none !important;
+    }
+
+    .receipt.image-loaded .receipt-overlay {
+      position: relative;
+      z-index: 2;
+      padding: 34px 28px;
+    }
+
+    .door.image-loaded {
+      background: transparent !important;
+    }
+
+    .door .asset-photo {
+      object-fit: cover;
+      z-index: 2;
+    }
+
+    .typo-card.use-image {
+      min-height: 118px;
+      justify-content: center;
+    }
+
+    .typo-card.use-image .typo-card-num,
+    .typo-card.use-image .typo-card-title,
+    .typo-card.use-image .typo-card-desc {
+      display: none;
+    }
+
+    .typo-card-img {
+      display: none;
+      width: 100%;
+      height: 86px;
+      object-fit: contain;
+    }
+
+    .typo-card-img.loaded {
+      display: block;
+    }
+
+
+
+    /* FIX: 이미지 모드에서 사탕/젤리가 접시 뒤로 숨지 않도록 레이어를 재정렬합니다. */
+    .plate-wrap {
+      overflow: visible;
+    }
+
+    .plate {
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .plate .asset-photo {
+      z-index: 2;
+    }
+
+    .plate-highlight {
+      z-index: 4;
+    }
+
+    .sweet {
+      z-index: 30 !important;
+      pointer-events: none;
+    }
+
+    .sweet .asset-photo {
+      z-index: 31 !important;
+    }
+
+    .plate-wrap.special {
+      pointer-events: auto;
+    }
+
+    .detail-jelly,
+    .detail-jelly .asset-photo {
+      z-index: 35 !important;
+    }
+
+    .receipt-typo-img {
+      display: none;
+      width: 100%;
+      max-height: 245px;
+      object-fit: contain;
+      margin: 4px auto 8px;
+    }
+
+    .receipt-typo.use-image strong,
+    .receipt-typo.use-image span,
+    .receipt-typo.use-image em {
+      display: none;
+    }
+
+    .receipt-typo.use-image .receipt-typo-img.loaded {
+      display: block;
+    }
+
+    /* FIX: 사탕/젤리를 접시 앞턱보다 확실히 위로 올려 전면에 배치 */
+    .plate-wrap .sweet {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      transform-origin: center center;
+    }
+
+    .plate-wrap .sweet.image-loaded {
+      left: 50% !important;
+      top: -10px !important;
+      width: 132px !important;
+      height: 106px !important;
+      transform: translateX(-50%) !important;
+      filter: drop-shadow(0 16px 10px rgba(0,0,0,0.26));
+    }
+
+    .plate-wrap .sweet.image-loaded .asset-photo {
+      inset: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: contain !important;
+      object-position: center center !important;
+    }
+
+    .plate-wrap .sweet.jelly.image-loaded,
+    .plate-wrap .sweet.candy-ball.image-loaded,
+    .plate-wrap .sweet.cube-jelly.image-loaded,
+    .plate-wrap .sweet.heart-jelly.image-loaded {
+      top: -8px !important;
+      width: 128px !important;
+      height: 100px !important;
+    }
+
+    .plate-wrap .sweet.lollipop.image-loaded {
+      top: -22px !important;
+      width: 124px !important;
+      height: 140px !important;
+    }
+
+    /* 접시 이미지가 콘텐츠를 덮지 않도록 앞턱만 아래로 보이게 유지 */
+    .plate {
+      bottom: 0 !important;
+    }
+
+    .plate .asset-photo {
+      inset: -18px -8px -8px -8px !important;
+      width: calc(100% + 16px) !important;
+      height: calc(100% + 26px) !important;
+    }
+
+    /* 접시 위 중앙 하이라이트도 중앙 정렬 */
+    .plate-wrap .plate-highlight {
+      left: 50% !important;
+      transform: translateX(-50%);
+      top: 46px;
+    }
+
+    /* 상세 화면 젤리도 더 위에 보이도록 조정 */
+    .detail-jelly.image-loaded {
+      width: 178px !important;
+      height: 138px !important;
+      top: 34% !important;
+    }
+
+    .detail-jelly.image-loaded .asset-photo {
+      inset: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: contain !important;
+      object-position: center center !important;
+    }
+
+
+    /* FIX: 타이포그래피 정렬 통일 */
+    .detail-typo {
+      left: 50% !important;
+      top: 62% !important;
+      width: 78% !important;
+      min-height: 170px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      transform: translate(-50%, -50%) !important;
+      transform-origin: center center;
+    }
+
+    .detail-typo.show {
+      transform: translate(-50%, -50%) scale(1.02) !important;
+    }
+
+    .detail-typo.use-image {
+      top: 62% !important;
+      width: 74% !important;
+      height: 190px !important;
+      min-height: 190px;
+      padding: 0;
+      overflow: visible;
+    }
+
+    .detail-typo .typo-photo {
+      position: static !important;
+      width: 100% !important;
+      height: 100% !important;
+      max-width: 100% !important;
+      max-height: 100% !important;
+      object-fit: contain !important;
+      object-position: center center !important;
+      margin: 0 auto !important;
+    }
+
+    .receipt-typo {
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .receipt-typo-img {
+      width: 92% !important;
+      max-width: 230px;
+      height: 220px !important;
+      max-height: 220px !important;
+      object-fit: contain !important;
+      object-position: center center !important;
+      margin: 0 auto 10px !important;
+    }
+
+    .all-typo-strip {
+      align-items: stretch;
+    }
+
+    .typo-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      gap: 6px;
+      min-height: 150px;
+      overflow: hidden;
+    }
+
+    .typo-card-title,
+    .typo-card-desc,
+    .typo-card-num {
+      width: 100%;
+      text-align: center;
+    }
+
+    .typo-card.use-image {
+      display: flex !important;
+      justify-content: center !important;
+      align-items: center !important;
+      padding: 12px 10px !important;
+      min-height: 150px !important;
+    }
+
+    .typo-card-img {
+      width: 100% !important;
+      height: 112px !important;
+      max-width: 160px;
+      object-fit: contain !important;
+      object-position: center center !important;
+      margin: 0 auto !important;
+    }
+
+    .typo-card.final {
+      transform: none !important;
+    }
+
+
+    .receipt-sources {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 6px;
+      text-align: left;
+      line-height: 1.4;
+    }
+
+    .receipt-source-head {
+      text-align: center;
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing: 0.14em;
+      margin-bottom: 4px;
+    }
+
+    .receipt-source-item {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 10px;
+      align-items: start;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+
+    .receipt-source-item strong {
+      display: inline-block;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .receipt-source-item span {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+
+    .typo-card {
+      cursor: pointer;
+    }
+
+    .ending-actions {
+      display: flex;
+      justify-content: center;
+      margin-top: 18px;
+    }
+
+    .restart-btn {
+      border: 1px solid rgba(17,17,17,0.7);
+      background: rgba(255,255,255,0.82);
+      color: #111;
+      padding: 12px 20px;
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      cursor: pointer;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+    }
+
+    .restart-btn:hover {
+      background: #111;
+      color: #fff;
+    }
+
+    .typo-modal {
+      position: absolute;
+      inset: 0;
+      z-index: 120;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      background: rgba(10, 14, 18, 0.74);
+      backdrop-filter: blur(4px);
+      padding: 40px;
+    }
+
+    .typo-modal.active {
+      display: flex;
+    }
+
+    .typo-modal-panel {
+      position: relative;
+      width: min(78%, 820px);
+      min-height: 300px;
+      max-height: 80%;
+      padding: 34px 32px 28px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.97) 0%, rgba(240,244,248,0.98) 100%);
+      border: 1px solid rgba(255,255,255,0.75);
+      box-shadow: 0 28px 50px rgba(0,0,0,0.28);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      overflow: auto;
+    }
+
+    .typo-modal-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      border: 1px solid #111;
+      background: transparent;
+      color: #111;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      cursor: pointer;
+    }
+
+    .typo-modal-close:hover {
+      background: #111;
+      color: #fff;
+    }
+
+    .typo-modal-label {
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      color: rgba(17,17,17,0.68);
+    }
+
+    .typo-modal-image {
+      display: none;
+      width: 100%;
+      max-width: 680px;
+      max-height: 56vh;
+      object-fit: contain;
+      object-position: center center;
+    }
+
+    .typo-modal-image.loaded {
+      display: block;
+    }
+
+    .typo-modal-text {
+      width: 100%;
+      text-align: center;
+      font-size: 34px;
+      font-weight: 900;
+      line-height: 1.45;
+      letter-spacing: 0.06em;
+      color: #111;
+      white-space: normal;
+    }
+
+    .typo-modal.use-image .typo-modal-text {
+      display: none;
+    }
+
+
+    /* UPDATED: 중간 그릇 뒤집기 출처 기능 제거 */
+    .top-plate.rotatable,
+    .top-plate.rotatable:hover,
+    .top-plate.rotatable:active,
+    .top-plate.turned {
+      cursor: default !important;
+      transform: none !important;
+    }
+
+    .top-plate.turned .detail-typo,
+    .top-plate.turned .detail-jelly {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+
+    .source-card {
+      display: none !important;
+    }
+
+    .typo-modal-source {
+      width: 100%;
+      max-width: 680px;
+      margin-top: 8px;
+      padding-top: 16px;
+      border-top: 1px dashed rgba(17,17,17,0.35);
+      text-align: left;
+      color: #111;
+    }
+
+    .typo-modal-source-title {
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      margin-bottom: 8px;
+    }
+
+    .typo-modal-source-body {
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.65;
+      letter-spacing: 0.02em;
+    }
+
+  
+
+    /* FINAL FIX 2026-06-20: 중앙 배치, 큰 이미지, 전면 노출, 영수증 바로가기 */
+    .progress {
+      right: 194px !important;
+    }
+
+    .skip-receipt-btn {
+      position: absolute;
+      right: 38px;
+      top: 26px;
+      z-index: 14;
+      border: 1px solid rgba(17,17,17,0.72);
+      background: rgba(255,255,255,0.74);
+      color: #111;
+      padding: 10px 16px;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 12px 22px rgba(0,0,0,0.10);
+    }
+
+    .skip-receipt-btn:hover {
+      background: #111;
+      color: #fff;
+    }
+
+    .a3-screen.ended .skip-receipt-btn,
+    .a3-screen.intro-lock .skip-receipt-btn {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .conveyor-area {
+      top: 20% !important;
+      bottom: 8% !important;
+    }
+
+    .plate-line {
+      left: 50% !important;
+      gap: 18px !important;
+      animation-duration: 14s !important;
+      animation-name: moveLeftCentered !important;
+    }
+
+    .belt-row:nth-child(2) .plate-line {
+      animation-duration: 16s !important;
+      animation-direction: reverse !important;
+    }
+
+    .belt-row:nth-child(3) .plate-line {
+      animation-duration: 15s !important;
+    }
+
+    @keyframes moveLeftCentered {
+      from { transform: translateY(-50%) translateX(-22%); }
+      to { transform: translateY(-50%) translateX(-54%); }
+    }
+
+    .plate-wrap {
+      width: 248px !important;
+      height: 160px !important;
+      overflow: visible !important;
+      isolation: isolate;
+    }
+
+    .plate {
+      left: 9px !important;
+      bottom: 0 !important;
+      width: 230px !important;
+      height: 88px !important;
+      z-index: 1 !important;
+      pointer-events: none !important;
+    }
+
+    .plate .asset-photo {
+      z-index: 1 !important;
+    }
+
+    .plate-highlight {
+      z-index: 2 !important;
+      pointer-events: none !important;
+    }
+
+    .plate-wrap .sweet {
+      left: 50% !important;
+      top: -30px !important;
+      z-index: 60 !important;
+      pointer-events: none !important;
+      transform: translateX(-50%) !important;
+      filter: drop-shadow(0 18px 12px rgba(0,0,0,0.28));
+    }
+
+    .plate-wrap .sweet .asset-photo {
+      z-index: 61 !important;
+      position: absolute !important;
+      inset: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: contain !important;
+      object-position: center center !important;
+    }
+
+    .plate-wrap .sweet.image-loaded,
+    .plate-wrap .sweet.jelly.image-loaded,
+    .plate-wrap .sweet.candy-ball.image-loaded,
+    .plate-wrap .sweet.cube-jelly.image-loaded,
+    .plate-wrap .sweet.heart-jelly.image-loaded {
+      top: -36px !important;
+      width: 172px !important;
+      height: 132px !important;
+    }
+
+    .plate-wrap .sweet.lollipop.image-loaded {
+      top: -54px !important;
+      width: 160px !important;
+      height: 178px !important;
+    }
+
+    .candy-ball {
+      width: 108px !important;
+      height: 108px !important;
+    }
+
+    .jelly {
+      width: 126px !important;
+      height: 92px !important;
+    }
+
+    .lollipop {
+      width: 112px !important;
+      height: 112px !important;
+    }
+
+    .cube-jelly {
+      width: 106px !important;
+      height: 106px !important;
+    }
+
+    .heart-jelly {
+      width: 118px !important;
+      height: 102px !important;
+    }
+
+    .detail-jelly.image-loaded {
+      width: 242px !important;
+      height: 188px !important;
+      top: 32% !important;
+      z-index: 70 !important;
+    }
+
+    .detail-jelly.image-loaded .asset-photo {
+      inset: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: contain !important;
+      object-position: center center !important;
+    }
+
+    .detail-jelly:not(.image-loaded) {
+      width: 190px !important;
+      height: 145px !important;
+      top: 34% !important;
+    }
+
+
+    /* FINAL FIX 2026-06-20 v2: 상단 UI 겹침 방지 + 타이포 중앙 확대 */
+    .top-right-controls {
+      position: absolute;
+      right: 38px;
+      top: 26px;
+      z-index: 16;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .top-right-controls .progress {
+      position: static !important;
+      right: auto !important;
+      top: auto !important;
+      margin: 0;
+      padding: 10px 14px;
+      border: 1px solid rgba(17,17,17,0.18);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.72);
+      box-shadow: 0 10px 18px rgba(0,0,0,0.08);
+      line-height: 1;
+      white-space: nowrap;
+    }
+
+    .top-right-controls .skip-receipt-btn {
+      position: static !important;
+      right: auto !important;
+      top: auto !important;
+      margin: 0;
+      white-space: nowrap;
+    }
+
+    .top-plate {
+      overflow: visible;
+    }
+
+    .detail-typo {
+      top: 50% !important;
+      width: 84% !important;
+      min-height: 220px !important;
+      font-size: 34px !important;
+      line-height: 1.25 !important;
+      padding: 0 8px;
+    }
+
+    .detail-typo.show {
+      transform: translate(-50%, -50%) scale(1.03) !important;
+    }
+
+    .detail-typo.use-image {
+      top: 50% !important;
+      width: 86% !important;
+      height: 250px !important;
+      min-height: 250px !important;
+      display: flex !important;
+      justify-content: center !important;
+      align-items: center !important;
+      overflow: visible !important;
+    }
+
+    .detail-typo .typo-photo {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: contain !important;
+      object-position: center center !important;
+      transform: scale(1.12);
+      transform-origin: center center;
+    }
+
+    @media (max-width: 900px) {
+      .top-right-controls {
+        right: 20px;
+        top: 20px;
+        gap: 8px;
+        transform: scale(0.92);
+        transform-origin: top right;
+      }
+
+      .detail-typo {
+        width: 88% !important;
+        min-height: 180px !important;
+        font-size: 26px !important;
+      }
+
+      .detail-typo.use-image {
+        width: 88% !important;
+        height: 210px !important;
+        min-height: 210px !important;
+      }
+    }
+
+
+
+    /* FINAL FIX 2026-06-20 v3: 상단 접시 확대 + 상세 화면 이미지 전용 */
+    .top-plate {
+      width: 620px !important;
+      height: 620px !important;
+    }
+
+    .top-plate::before {
+      left: 88px !important;
+      top: 88px !important;
+      width: 444px !important;
+      height: 444px !important;
+    }
+
+    .detail-jelly {
+      top: 33% !important;
+    }
+
+    .detail-jelly.image-loaded {
+      width: 220px !important;
+      height: 170px !important;
+      top: 33% !important;
+    }
+
+    .detail-jelly:not(.image-loaded) {
+      width: 220px !important;
+      height: 170px !important;
+      top: 33% !important;
+    }
+
+    .detail-typo,
+    .detail-typo.show {
+      top: 52% !important;
+      width: 88% !important;
+      min-height: 280px !important;
+      font-size: 0 !important;
+      line-height: 1 !important;
+      color: transparent !important;
+    }
+
+    .detail-typo.use-image {
+      top: 52% !important;
+      width: 88% !important;
+      height: 300px !important;
+      min-height: 300px !important;
+      padding: 0 !important;
+    }
+
+    .detail-typo .typo-photo {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: contain !important;
+      object-position: center center !important;
+      transform: scale(1.18) !important;
+    }
+
+    .detail-guide {
+      display: none !important;
+    }
+
+    @media (max-width: 900px) {
+      .top-plate {
+        width: 82vw !important;
+        height: 82vw !important;
+        max-width: 560px !important;
+        max-height: 560px !important;
+      }
+
+      .top-plate::before {
+        left: 14.2% !important;
+        top: 14.2% !important;
+        width: 71.6% !important;
+        height: 71.6% !important;
+      }
+
+      .detail-typo,
+      .detail-typo.use-image {
+        width: 90% !important;
+        min-height: 220px !important;
+        height: 220px !important;
+      }
+
+      .detail-jelly.image-loaded,
+      .detail-jelly:not(.image-loaded) {
+        width: 180px !important;
+        height: 138px !important;
+      }
+    }
+
+
+
+    /* FINAL FIX 2026-06-20 v4: 미니멀+빈티지 상세 젤리 전면 배치 + 효과음 준비 */
+    .top-plate > .top-plate-photo,
+    .top-plate .asset-photo.top-plate-photo {
+      z-index: 1 !important;
+      pointer-events: none !important;
+    }
+
+    .detail-jelly,
+    .detail-jelly.image-loaded,
+    .detail-jelly .asset-photo {
+      z-index: 120 !important;
+      position: absolute !important;
+      pointer-events: auto !important;
+    }
+
+    .detail-typo,
+    .detail-typo.use-image {
+      z-index: 90 !important;
+      pointer-events: none !important;
+    }
+
+    .detail-jelly.image-loaded .asset-photo {
+      z-index: 121 !important;
+      position: relative !important;
+    }
+
+    .detail-jelly.front {
+      z-index: 140 !important;
+      transform: translate(-50%, -50%) scale(1.04) !important;
+    }
+
+    .detail-jelly.front.image-loaded .asset-photo {
+      transform: scale(1.08);
+      transform-origin: center center;
+    }
+
+
+
+    /* FINAL FIX 2026-06-20 v5: TYPO 02 상세 사탕 전면/상향 보정 */
+    .detail-jelly.front-lift {
+      z-index: 160 !important;
+      top: 28% !important;
+      transform: translate(-50%, -50%) scale(1.08) !important;
+    }
+
+    .detail-jelly.front-lift.image-loaded {
+      width: 230px !important;
+      height: 190px !important;
+      top: 28% !important;
+    }
+
+    .detail-jelly.front-lift .asset-photo {
+      z-index: 161 !important;
+      object-fit: contain !important;
+      object-position: center center !important;
+      transform: scale(1.06);
+      transform-origin: center center;
+    }
+
+
+
+    /* FINAL FIX 2026-06-20 v6: 모든 상세 젤리/사탕을 유형별로 안정 배치 */
+    #detailJelly,
+    #detailJelly.image-loaded {
+      position: absolute !important;
+      left: 50% !important;
+      z-index: 170 !important;
+      pointer-events: auto !important;
+      filter: drop-shadow(0 18px 14px rgba(0,0,0,0.22));
+    }
+
+    #detailJelly .asset-photo {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: contain !important;
+      object-position: center center !important;
+      z-index: 171 !important;
+      position: relative !important;
+    }
+
+    .top-plate,
+    .top-plate.image-loaded {
+      overflow: visible !important;
+    }
+
+    .top-plate > .top-plate-photo,
+    .top-plate .asset-photo.top-plate-photo {
+      z-index: 1 !important;
+      pointer-events: none !important;
+    }
+
+    #detailJelly[data-sweet-type="jelly"],
+    #detailJelly[data-sweet-type="jelly"].image-loaded {
+      top: 32% !important;
+      width: 220px !important;
+      height: 170px !important;
+      transform: translate(-50%, -50%) !important;
+    }
+
+    #detailJelly[data-sweet-type="candyBall"],
+    #detailJelly[data-sweet-type="candyBall"].image-loaded {
+      top: 31% !important;
+      width: 210px !important;
+      height: 210px !important;
+      transform: translate(-50%, -50%) !important;
+    }
+
+    #detailJelly[data-sweet-type="lollipop"],
+    #detailJelly[data-sweet-type="lollipop"].image-loaded {
+      top: 29% !important;
+      width: 220px !important;
+      height: 255px !important;
+      transform: translate(-50%, -50%) !important;
+    }
+
+    #detailJelly[data-sweet-type="cubeJelly"],
+    #detailJelly[data-sweet-type="cubeJelly"].image-loaded {
+      top: 31% !important;
+      width: 205px !important;
+      height: 205px !important;
+      transform: translate(-50%, -50%) !important;
+    }
+
+    #detailJelly[data-sweet-type="heartJelly"],
+    #detailJelly[data-sweet-type="heartJelly"].image-loaded {
+      top: 31% !important;
+      width: 220px !important;
+      height: 195px !important;
+      transform: translate(-50%, -50%) !important;
+    }
+
+    #detailJelly.crack-1,
+    #detailJelly.crack-2,
+    #detailJelly.hit {
+      z-index: 175 !important;
+    }
+
+    #detailJelly.broken {
+      z-index: 150 !important;
+    }
+
+    @media (max-width: 900px) {
+      #detailJelly[data-sweet-type="jelly"],
+      #detailJelly[data-sweet-type="jelly"].image-loaded {
+        width: 185px !important;
+        height: 145px !important;
+      }
+
+      #detailJelly[data-sweet-type="candyBall"],
+      #detailJelly[data-sweet-type="candyBall"].image-loaded,
+      #detailJelly[data-sweet-type="cubeJelly"],
+      #detailJelly[data-sweet-type="cubeJelly"].image-loaded {
+        width: 175px !important;
+        height: 175px !important;
+      }
+
+      #detailJelly[data-sweet-type="lollipop"],
+      #detailJelly[data-sweet-type="lollipop"].image-loaded {
+        width: 185px !important;
+        height: 220px !important;
+      }
+
+      #detailJelly[data-sweet-type="heartJelly"],
+      #detailJelly[data-sweet-type="heartJelly"].image-loaded {
+        width: 180px !important;
+        height: 160px !important;
+      }
+    }
+
+
+
+    /* FINAL FIX 2026-06-20 v7: 3회 전 사라짐 방지 + 전면 고정 */
+    #detailJelly:not(.broken),
+    #detailJelly.crack-1,
+    #detailJelly.crack-2,
+    #detailJelly.hit {
+      opacity: 1 !important;
+      visibility: visible !important;
+      z-index: 185 !important;
+    }
+
+    #detailJelly.broken {
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+      z-index: 120 !important;
+      transform: translate(-50%, -50%) scale(0.22) rotate(10deg) !important;
+      transition: opacity 0.22s ease, transform 0.22s ease, visibility 0s linear 0.22s !important;
+    }
+
+    #detailJelly,
+    #detailJelly.image-loaded,
+    #detailJelly .asset-photo {
+      backface-visibility: hidden !important;
+      -webkit-backface-visibility: hidden !important;
+    }
+
+</style>
+</head>
+<body>
+<main class="a3-screen intro-lock">
+<audio id="doorOpenSound" src="door_open.mp3" preload="auto"></audio>
+<audio id="jellyCrackSound" src="jelly_crack.mp3" preload="auto"></audio>
+
+<section aria-label="welcome entrance" class="intro-screen" id="introScreen">
+<div class="door door-left"></div>
+<div class="door door-right"></div>
+<div class="intro-content">
+<!-- <p class="intro-jp">과제 2</p> -->
+<p class="intro-ko">검은 그릇을 찾아 나를 발견하세요.</p>
+<button class="intro-btn" id="introStartBtn" type="button">START</button>
+</div>
+</section>
+<div class="title">TYPOGRAPHY COMMUNICATION</div>
+<div class="subtitle">검은 접시를 클릭하세요</div>
+<div class="top-right-controls"><div class="progress" id="progress">0 / 6</div><button class="skip-receipt-btn" id="skipReceiptBtn" type="button">NEXT → RECEIPT</button></div>
+    
+<section class="conveyor-area">
+<div class="belt-row">
+<div class="plate-line">
+
+          <div class="plate-wrap">
+<div class="sweet heart-jelly"></div>
+<div class="plate"></div>
+<div class="plate-highlight"></div>
+</div>
+
+          <div class="plate-wrap">
+<div class="sweet jelly"></div>
+<div class="plate"></div>
+<div class="plate-highlight"></div>
+</div>
+
+          <div class="plate-wrap special" data-typo="1">
+<div class="sweet candy-ball"></div>
+<div class="plate"></div>
+<div class="plate-highlight"></div>
+</div>
+
+          <div class="plate-wrap">
+<div class="sweet cube-jelly"></div>
+<div class="plate"></div>
+<div class="plate-highlight"></div>
+</div>
+
+          <div class="plate-wrap">
+<div class="sweet lollipop"></div>
+<div class="plate"></div>
+<div class="plate-highlight"></div>
+</div>
+
+          <div class="plate-wrap special" data-typo="6">
+<div class="sweet jelly"></div>
+<div class="plate"></div>
+<div class="plate-highlight"></div>
+</div>
+
+          <div class="plate-wrap">
+<div class="sweet heart-jelly"></div>
+<div class="plate"></div>
+<div class="plate-highlight"></div>
+</div>
+
+          <div class="plate-wrap">
+<div class="sweet candy-ball"></div>
+<div class="plate"></div>
+<div class="plate-highlight"></div>
+</div>
+
+          <div class="plate-wrap">
+<div class="sweet cube-jelly"></div>
+<div class="plate"></div>
+<div class="plate-highlight"></div>
+</div>
+
+          <div class="plate-wrap">
+<div class="sweet lollipop"></div>
+<div class="plate"></div>
+<div class="plate-highlight"></div>
+</div>
+
+          <div class="plate-wrap">
+<div class="sweet jelly"></div>
+<div class="plate"></div>
+<div class="plate-highlight"></div>
+</div>
+
+          <div class="plate-wrap">
+<div class="sweet candy-ball"></div>
+<div class="plate"></div>
+<div class="plate-highlight"></div>
+</div>
+
+        </div>
+</div>
+<div class="belt-row">
+<div class="plate-line">
+
+          <div class="plate-wrap">
+<div class="sweet cube-jelly"></div>
+<div class="plate"></div>
+<div class="plate-highlight"></div>
+</div>
+
+          <div class="plate-wrap">
+<div class="sweet heart-jelly"></div>
+<div class="plate"></div>
+<div class="plate-highlight"></div>
+</div>
+
+          <div class="plate-wrap">
+<div class="sweet jelly"></div>
+<div class="plate"></div>
+<div class="plate-highlight"></div>
+</div>
+
+          <div class="plate-wrap">
+<div class="sweet lollipop"></div>
+<div class="plate"></div>
+<div class="plate-highlight"></div>
+</div>
+
+          <div class="plate-wrap special" data-typo="3">
+<div class="sweet candy-ball"></div>
+<div class="plate"></div>
+<div class="plate-highlight"></div>
+</div>
+
+          <div class="plate-wrap">
+<div class="sweet cube-jelly"></div>
+<div class="plate"></div>
+<div class="plate-highlight"></div>
+</div>
+
+          <div class="plate-wrap">
+<div class="sweet heart-jelly"></div>
+<div class="plate"></div>
+<div class="plate-highlight"></div>
+</div>
+
+          <div class="plate-wrap special" data-typo="2">
+<div class="sweet jelly"></div>
+<div class="plate"></div>
+<div class="plate-highlight"></div>
+</div>
+
+          <div class="plate-wrap">
+<div class="sweet lollipop"></div>
+<div class="plate"></div>
+<div class="plate-highlight"></div>
+</div>
+
+          <div class="plate-wrap">
+<div class="sweet cube-jelly"></div>
+<div class="plate"></div>
+<div class="plate-highlight"></div>
+</div>
+
+          <div class="plate-wrap">
+<div class="sweet candy-ball"></div>
+<div class="plate"></div>
+<div class="plate-highlight"></div>
+</div>
+
+          <div class="plate-wrap">
+<div class="sweet jelly"></div>
+<div class="plate"></div>
+<div class="plate-highlight"></div>
+</div>
+
+        </div>
+</div>
+<div class="belt-row">
+<div class="plate-line">
+
+          <div class="plate-wrap">
+<div class="sweet jelly"></div>
+<div class="plate"></div>
+<div class="plate-highlight"></div>
+</div>
+
+          <div class="plate-wrap">
+<div class="sweet cube-jelly"></div>
+<div class="plate"></div>
+<div class="plate-highlight"></div>
+</div>
+
+          <div class="plate-wrap special" data-typo="4">
+<div class="sweet heart-jelly"></div>
+<div class="plate"></div>
+<div class="plate-highlight"></div>
+</div>
+
+          <div class="plate-wrap">
+<div class="sweet candy-ball"></div>
+<div class="plate"></div>
+<div class="plate-highlight"></div>
+</div>
+
+          <div class="plate-wrap special" data-typo="5">
+<div class="sweet lollipop"></div>
+<div class="plate"></div>
+<div class="plate-highlight"></div>
+</div>
+
+          <div class="plate-wrap">
+<div class="sweet jelly"></div>
+<div class="plate"></div>
+<div class="plate-highlight"></div>
+</div>
+
+          <div class="plate-wrap">
+<div class="sweet cube-jelly"></div>
+<div class="plate"></div>
+<div class="plate-highlight"></div>
+</div>
+
+          <div class="plate-wrap">
+<div class="sweet heart-jelly"></div>
+<div class="plate"></div>
+<div class="plate-highlight"></div>
+</div>
+
+          <div class="plate-wrap">
+<div class="sweet candy-ball"></div>
+<div class="plate"></div>
+<div class="plate-highlight"></div>
+</div>
+
+          <div class="plate-wrap">
+<div class="sweet jelly"></div>
+<div class="plate"></div>
+<div class="plate-highlight"></div>
+</div>
+
+          <div class="plate-wrap">
+<div class="sweet lollipop"></div>
+<div class="plate"></div>
+<div class="plate-highlight"></div>
+</div>
+
+          <div class="plate-wrap">
+<div class="sweet cube-jelly"></div>
+<div class="plate"></div>
+<div class="plate-highlight"></div>
+</div>
+
+        </div>
+</div>
+</section>
+<section class="detail-screen" id="detailScreen">
+<button class="back-btn" id="backBtn">BACK</button>
+<div class="top-plate" id="topPlate">
+<div class="detail-jelly" id="detailJelly"></div>
+<div class="detail-typo" id="detailTypo"></div>
+</div>
+<p class="detail-guide" id="detailGuide">
+        젤리를 3번 클릭하면 타이포그래피가 나타납니다.
+      </p>
+</section>
+<section class="ending-screen" id="endingScreen">
+<div class="ending-main">
+<div class="owner">
+<div class="owner-head"></div>
+<div class="owner-body"></div>
+<div class="owner-arm"></div>
+</div>
+<div class="receipt">
+<div class="receipt-overlay">
+<div class="receipt-title">RECEIPT</div>
+<div class="receipt-line"></div>
+<div class="receipt-sources">
+<div class="receipt-source-head">USED SOURCES</div>
+<div class="receipt-source-item"><strong>01</strong><span>MBTI: INTP or INFP </span></div>
+<div class="receipt-source-item"><strong>02</strong><span>포부: 디자인 작업 과정에서 세운 균형의 기준</span></div>
+<div class="receipt-source-item"><strong>03</strong><span>장접: 수업과 작업에서 반복된 행동 패턴</span></div>
+<div class="receipt-source-item"><strong>04</strong><span>단점: 자료조사와 리서치 습관</span></div>
+<div class="receipt-source-item"><strong>05</strong><span>생각: 선호하는 시각 취향 정리</span></div>
+<div class="receipt-source-item"><strong>06</strong><span>목표: 사람들에게 도움이되는 것</span></div>
+</div>
+<div class="receipt-line"></div>
+<div class="receipt-footer">ARCHIVE OF MY TYPOGRAPHY SOURCES</div>
+</div>
+</div>
+</div>
+<div aria-label="all typography summary" class="all-typo-strip">
+<div class="typo-card" data-typo="1">
+<span class="typo-card-num">TYPO 01</span>
+<strong class="typo-card-title">I AM NOT FIXED</strong>
+<span class="typo-card-desc">INTJ-T / INFJ / ISFJ<br/>고정되지 않는 정체성</span>
+</div>
+<div class="typo-card" data-typo="2">
+<span class="typo-card-num">TYPO 02</span>
+<strong class="typo-card-title">BALANCE IS DESIGN</strong>
+<span class="typo-card-desc">과하지도, 빈약하지도 않은<br/>적절한 선</span>
+</div>
+<div class="typo-card" data-typo="3">
+<span class="typo-card-num">TYPO 03</span>
+<strong class="typo-card-title">RULE &amp; CURIOSITY</strong>
+<span class="typo-card-desc">참을성, 규칙,<br/>그리고 호기심</span>
+</div>
+<div class="typo-card" data-typo="4">
+<span class="typo-card-num">TYPO 04</span>
+<strong class="typo-card-title">SEARCHING…</strong>
+<span class="typo-card-desc">자료를 찾다가<br/>오래 머무는 사람</span>
+</div>
+<div class="typo-card" data-typo="5">
+<span class="typo-card-num">TYPO 05</span>
+<strong class="typo-card-title">MINIMAL + VINTAGE</strong>
+<span class="typo-card-desc">간단명료하지만<br/>감성이 있는 디자인</span>
+</div>
+<div class="typo-card final" data-typo="6">
+<span class="typo-card-num">TYPO 06</span>
+<strong class="typo-card-title">DESIGN FOR HELP</strong>
+<span class="typo-card-desc">호기심으로 탐구하고,<br/>디자인으로 사람을 돕는 사람</span>
+</div>
+</div>
+<div class="ending-actions">
+<button class="restart-btn" id="restartBtn" type="button">GO TO START</button>
+</div>
+</section>
+<section aria-label="Typography enlarged view" class="typo-modal" id="typoModal">
+<div class="typo-modal-panel">
+<button class="typo-modal-close" id="typoModalClose" type="button">CLOSE</button>
+<div class="typo-modal-label" id="typoModalLabel">TYPO 01</div>
+<img alt="Expanded typography" class="typo-modal-image" id="typoModalImage"/>
+<div class="typo-modal-text" id="typoModalText">TYPOGRAPHY</div>
+<div class="typo-modal-source" id="typoModalSource">
+<div class="typo-modal-source-title" id="typoModalSourceTitle">SOURCE</div>
+<div class="typo-modal-source-body" id="typoModalSourceBody">출처가 표시됩니다.</div>
+</div>
+</div>
+</section>
+<div class="guide">2601110264 정지영</div>
+<div class="vignette"></div>
+</main>
+<script>
+
+
+    const introScreen = document.getElementById("introScreen");
+    const introStartBtn = document.getElementById("introStartBtn");
+
+    function playIntroVoice() {
+      // 보이스 제거: START 클릭 시 음성 없이 문 열림만 실행합니다.
+    }
+
+    introStartBtn.addEventListener("click", () => {
+      playIntroVoice();
+      playSound(doorOpenSound);
+      introScreen.classList.add("open");
+
+      setTimeout(() => {
+        introScreen.classList.add("hidden");
+        a3Screen.classList.remove("intro-lock");
+      }, 1250);
+    });
+
+    const typoTexts = {
+      1: "I AM NOT FIXED<br>INTJ-T / INFJ / ISFJ",
+      2: "BALANCE IS DESIGN<br>과하지도, 빈약하지도 않은 적절한 선",
+      3: "RULE & CURIOSITY<br>참을성, 규칙, 그리고 호기심",
+      4: "SEARCHING…<br>자료를 찾다가 오래 머무는 사람",
+      5: "MINIMAL + VINTAGE<br>간단명료하지만 감성이 있는 디자인",
+      6: "DESIGN FOR HELP<br>호기심으로 탐구하고, 디자인으로 사람을 돕는 사람"
+    };
+
+    const sourceTexts = {
+      1: {
+        title: "IDENTITY / CHANGE",
+        body: "출처 및 사용 ai: Mystery Std 디자이너: Monotype KK (Fontworks Inc.), 제작자: Monotype, ChatGPT."
+      },
+      2: {
+        title: "BALANCE / DESIGN ATTITUDE",
+        body: "출처 및 사용 ai: Neutronic Hangeul Rounded 디자이너: Mark Frömberg and Minjoo Ham 함민주, 제작자: Hypertype. ChatGPT."
+      },
+      3: {
+        title: "RULE / CURIOSITY",
+        body: "출처 및 사용 ai: AB Kakashichan 디자이너: Masahiko Yamada 山田正彦, 제작자: FONT1000, ChatGPT."
+      },
+      4: {
+        title: "SEARCHING / RESEARCH",
+        body: "출처 및 사용 ai: HelloFont ID Xiang Su 16, 제작자: HelloFont. ChatGPT."
+      },
+      5: {
+        title: "MINIMAL / VINTAGE",
+        body: "출처 및 사용 ai: Brother 1816 디자이너: Fernando Díaz and Ignacio Corbo, 제작자: TipoType, ChatGPT."
+      },
+      6: {
+        title: "DESIGN / HELP",
+        body: "출처 및 사용 ai: Kuhlman Variable 디자이너: David Jonathan Ros, 제작자: DJR, ChatGPT."
+      }
+    };
+
+    const detailScreen = document.getElementById("detailScreen");
+    const detailTypo = document.getElementById("detailTypo");
+    const detailJelly = document.getElementById("detailJelly");
+    const topPlate = document.getElementById("topPlate");
+    const detailGuide = document.getElementById("detailGuide");
+    const backBtn = document.getElementById("backBtn");
+    const progress = document.getElementById("progress");
+    const skipReceiptBtn = document.getElementById("skipReceiptBtn");
+    const endingScreen = document.getElementById("endingScreen");
+    const a3Screen = document.querySelector(".a3-screen");
+    const restartBtn = document.getElementById("restartBtn");
+    const typoModal = document.getElementById("typoModal");
+    const typoModalClose = document.getElementById("typoModalClose");
+    const typoModalLabel = document.getElementById("typoModalLabel");
+    const typoModalImage = document.getElementById("typoModalImage");
+    const typoModalText = document.getElementById("typoModalText");
+    const typoModalSourceTitle = document.getElementById("typoModalSourceTitle");
+    const typoModalSourceBody = document.getElementById("typoModalSourceBody");
+    const doorOpenSound = document.getElementById("doorOpenSound");
+    const jellyCrackSound = document.getElementById("jellyCrackSound");
+
+    let currentTypo = null;
+    let currentPlate = null;
+    let currentSweetType = "jelly";
+    let jellyClickCount = 0;
+    let jellyClickLocked = false;
+    let completedCount = 0;
+    let typoRevealed = false;
+    let pendingEnding = false;
+
+    const completedTypo = new Set();
+
+    function playSound(audioElement, allowOverlap = false) {
+      if (!audioElement) return;
+      try {
+        const target = allowOverlap ? audioElement.cloneNode(true) : audioElement;
+        target.currentTime = 0;
+        const playPromise = target.play();
+        if (playPromise && typeof playPromise.catch === "function") {
+          playPromise.catch(() => {});
+        }
+      } catch (error) {}
+    }
+
+
+    const assetFiles = {
+      plateNormal: "plate_normal.png",
+      plateBlack: "plate_black.png",
+      plateTop: "plate_top.png",
+      candyBall: "sweet_candy_ball.png",
+      jelly: "sweet_jelly.png",
+      lollipop: "sweet_lollipop.png",
+      cubeJelly: "sweet_cube_jelly.png",
+      heartJelly: "sweet_heart_jelly.png",
+      jellyCrack1: "jelly_crack_1.png",
+      jellyCrack2: "jelly_crack_2.png",
+      jellyBroken: "jelly_broken.png",
+      owner: "owner.png",
+      receipt: "receipt.png",
+      doorLeft: "door_left.png",
+      doorRight: "door_right.png"
+    };
+
+    function addOptionalImage(parent, src, className = "asset-photo", loadedClass = "image-loaded") {
+      if (!parent || !src) return null;
+      const img = document.createElement("img");
+      img.src = src;
+      img.alt = "";
+      img.className = className;
+      img.draggable = false;
+      img.addEventListener("load", () => {
+        img.classList.add("loaded");
+        parent.classList.add(loadedClass);
+      });
+      img.addEventListener("error", () => {
+        img.remove();
+      });
+      parent.appendChild(img);
+      return img;
+    }
+
+    function getSweetType(sweet) {
+      if (!sweet) return "jelly";
+      if (sweet.classList.contains("candy-ball")) return "candyBall";
+      if (sweet.classList.contains("lollipop")) return "lollipop";
+      if (sweet.classList.contains("cube-jelly")) return "cubeJelly";
+      if (sweet.classList.contains("heart-jelly")) return "heartJelly";
+      return "jelly";
+    }
+
+    function getSweetImageName(sweet) {
+      return assetFiles[getSweetType(sweet)] || assetFiles.jelly;
+    }
+
+    function setupImageAssets() {
+      document.querySelectorAll(".plate-wrap").forEach((wrap) => {
+        const plate = wrap.querySelector(".plate");
+        const sweet = wrap.querySelector(".sweet");
+        wrap.dataset.sweetType = getSweetType(sweet);
+        addOptionalImage(plate, wrap.classList.contains("special") ? assetFiles.plateBlack : assetFiles.plateNormal);
+        addOptionalImage(sweet, getSweetImageName(sweet));
+      });
+
+      addOptionalImage(topPlate, assetFiles.plateTop, "asset-photo top-plate-photo");
+      addOptionalImage(document.querySelector(".door-left"), assetFiles.doorLeft);
+      addOptionalImage(document.querySelector(".door-right"), assetFiles.doorRight);
+      addOptionalImage(document.querySelector(".owner"), assetFiles.owner, "owner-photo");
+      const receiptPhoto = addOptionalImage(document.querySelector(".receipt"), assetFiles.receipt, "receipt-photo");
+      if (receiptPhoto) {
+        document.querySelector(".receipt").prepend(receiptPhoto);
+      }
+
+      const detailJellyImg = addOptionalImage(detailJelly, assetFiles.jelly);
+      detailJelly.dataset.imageState = "normal";
+
+      document.querySelectorAll(".typo-card").forEach((card, index) => {
+        const filename = index === 5 ? "typo6_receipt.png" : `typo${index + 1}.png`;
+        const img = document.createElement("img");
+        img.src = filename;
+        img.alt = `Typography ${index + 1}`;
+        img.className = "typo-card-img";
+        img.draggable = false;
+        img.addEventListener("load", () => {
+          img.classList.add("loaded");
+          card.classList.add("use-image");
+        });
+        img.addEventListener("error", () => img.remove());
+        card.appendChild(img);
+      });
+
+
+    }
+
+    function setDetailJellyImage(state) {
+      const img = detailJelly.querySelector("img");
+      if (!img) return;
+
+      const currentNormalSrc = assetFiles[currentSweetType] || assetFiles.jelly;
+      let nextSrc = currentNormalSrc;
+
+      if (currentSweetType === "jelly") {
+        if (state === "crack1") nextSrc = assetFiles.jellyCrack1;
+        if (state === "crack2") nextSrc = assetFiles.jellyCrack2;
+        if (state === "broken") nextSrc = assetFiles.jellyBroken;
+      } else {
+        // 다른 사탕/젤리는 동일한 이미지를 유지하고, CSS 금/사라짐 효과만 적용합니다.
+        nextSrc = currentNormalSrc;
+      }
+
+      if (detailJelly.dataset.imageState === state && img.getAttribute("src") === nextSrc) return;
+      detailJelly.dataset.imageState = state;
+      img.classList.remove("loaded");
+      img.src = nextSrc;
+    }
+
+    function setDetailTypoContent(typoId) {
+      detailTypo.classList.remove("use-image");
+      detailTypo.innerHTML = "";
+
+      const filename = String(typoId) === "6" ? "typo6_receipt.png" : `typo${typoId}.png`;
+      const img = document.createElement("img");
+      img.src = filename;
+      img.alt = `Typography ${typoId}`;
+      img.className = "typo-photo";
+      img.draggable = false;
+      img.addEventListener("load", () => {
+        img.classList.add("loaded");
+        detailTypo.classList.add("use-image");
+      });
+      img.addEventListener("error", () => img.remove());
+      detailTypo.appendChild(img);
+    }
+
+    setupImageAssets();
+
+    document.querySelectorAll(".plate-wrap.special").forEach((plate) => {
+      plate.addEventListener("click", () => {
+        const typoId = plate.dataset.typo;
+
+        if (completedTypo.has(typoId)) return;
+
+        currentTypo = typoId;
+        currentPlate = plate;
+        currentSweetType = plate.dataset.sweetType || "jelly";
+        jellyClickCount = 0;
+        jellyClickLocked = false;
+        typoRevealed = false;
+
+        setDetailTypoContent(currentTypo);
+        detailTypo.classList.remove("show");
+
+        detailJelly.classList.remove("crack-1", "crack-2", "broken", "hit", "front", "front-lift");
+        detailJelly.dataset.sweetType = currentSweetType;
+        setDetailJellyImage("normal");
+        topPlate.classList.remove("rotatable", "turned");
+        detailGuide.textContent = "젤리를 3번 클릭하면 타이포그래피가 나타납니다.";
+
+        detailScreen.classList.add("active");
+      });
+    });
+
+    detailJelly.addEventListener("click", (event) => {
+      event.stopPropagation();
+      if (!currentTypo) return;
+      if (completedTypo.has(currentTypo)) return;
+
+      jellyClickCount++;
+      playSound(jellyCrackSound, true);
+
+      detailJelly.classList.remove("hit");
+      void detailJelly.offsetWidth;
+      detailJelly.classList.add("hit");
+
+      if (jellyClickCount === 1) {
+        detailJelly.classList.add("crack-1");
+        setDetailJellyImage("crack1");
+      }
+
+      if (jellyClickCount === 2) {
+        detailJelly.classList.remove("crack-1");
+        detailJelly.classList.add("crack-2");
+        setDetailJellyImage("crack2");
+      }
+
+      if (jellyClickCount >= 3) {
+        detailJelly.classList.remove("crack-1", "crack-2");
+        detailJelly.classList.add("broken");
+        setDetailJellyImage("broken");
+
+        detailTypo.classList.add("show");
+        typoRevealed = true;
+        topPlate.classList.remove("rotatable", "turned");
+        // detailGuide.textContent = "Typography revealed. Press BACK to continue.";
+
+        completedTypo.add(currentTypo);
+        completedCount++;
+
+        progress.textContent = `${completedCount} / 6`;
+
+        if (currentPlate) {
+          setTimeout(() => {
+            currentPlate.classList.add("completed");
+          }, 500);
+        }
+
+        if (completedCount === 6) {
+          pendingEnding = true;
+          detailGuide.textContent = "Press BACK for the receipt ending.";
+        }
+      }
+    });
+
+    function getTypoImageFilename(typoId) {
+      return Number(typoId) === 6 ? "typo6_receipt.png" : `typo${typoId}.png`;
+    }
+
+    function openTypoModal(typoId, fallbackHtml) {
+      typoModalLabel.textContent = `TYPO ${String(typoId).padStart(2, "0")}`;
+      typoModal.classList.remove("use-image");
+      typoModalText.innerHTML = fallbackHtml || typoTexts[typoId] || "TYPOGRAPHY";
+      const source = sourceTexts[typoId];
+      typoModalSourceTitle.textContent = source ? source.title : "SOURCE";
+      typoModalSourceBody.textContent = source ? source.body : "출처 정보가 없습니다.";
+      typoModalImage.classList.remove("loaded");
+      typoModalImage.style.display = "none";
+      typoModalImage.onload = () => {
+        typoModalImage.classList.add("loaded");
+        typoModalImage.style.display = "block";
+        typoModal.classList.add("use-image");
+      };
+      typoModalImage.onerror = () => {
+        typoModalImage.classList.remove("loaded");
+        typoModalImage.style.display = "none";
+        typoModal.classList.remove("use-image");
+      };
+      typoModalImage.src = getTypoImageFilename(typoId);
+      typoModal.classList.add("active");
+    }
+
+    function closeTypoModal() {
+      typoModal.classList.remove("active", "use-image");
+    }
+
+    document.querySelectorAll(".typo-card").forEach((card) => {
+      card.addEventListener("click", () => {
+        const typoId = card.dataset.typo;
+        openTypoModal(typoId, card.innerHTML);
+      });
+    });
+
+    typoModalClose.addEventListener("click", closeTypoModal);
+    typoModal.addEventListener("click", (event) => {
+      if (event.target === typoModal) closeTypoModal();
+    });
+
+    restartBtn.addEventListener("click", () => {
+      window.location.reload();
+    });
+
+    if (skipReceiptBtn) {
+      skipReceiptBtn.addEventListener("click", () => {
+        introScreen.classList.add("hidden");
+        a3Screen.classList.remove("intro-lock");
+        if (detailScreen.classList.contains("active")) {
+          resetDetailScreen();
+        }
+        pendingEnding = false;
+        completedCount = 6;
+        progress.textContent = "6 / 6";
+        document.querySelectorAll(".plate-wrap.special").forEach((plate) => {
+          plate.classList.add("completed");
+        });
+        showEndingScreen();
+      });
+    }
+
+
+    function resetDetailScreen() {
+      detailScreen.classList.remove("active");
+      detailTypo.classList.remove("show");
+      detailJelly.classList.remove("crack-1", "crack-2", "broken", "hit", "front", "front-lift");
+      delete detailJelly.dataset.sweetType;
+      setDetailJellyImage("normal");
+      topPlate.classList.remove("rotatable", "turned");
+      detailGuide.textContent = "사탕을 깨트리면 타이포그래피가 나타납니다.";
+
+      currentTypo = null;
+      currentPlate = null;
+      currentSweetType = "jelly";
+      jellyClickCount = 0;
+      jellyClickLocked = false;
+      typoRevealed = false;
+    }
+
+    function showEndingScreen() {
+      a3Screen.classList.add("ended");
+      endingScreen.classList.add("active");
+      pendingEnding = false;
+    }
+
+    backBtn.addEventListener("click", () => {
+      const shouldShowEnding = pendingEnding;
+      resetDetailScreen();
+
+      if (shouldShowEnding) {
+        showEndingScreen();
+      }
+    });
+  </script>
+</body>
+</html>
